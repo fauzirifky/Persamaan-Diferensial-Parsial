@@ -3,7 +3,7 @@
 \pdpfooter{Pertemuan 9 - Persamaan Gelombang}{}
 
 \title{Persamaan Gelombang}
-\subtitle{Pemodelan, Klasifikasi, Bentuk Kanonik, dan Solusi Analitik}
+\subtitle{Pemodelan Fisis, Klasifikasi, Bentuk Kanonik, dan Solusi Analitik}
 \author{Tim Pengajar Persamaan Diferensial Parsial}
 \institute{Program Studi Matematika - Institut Teknologi Sumatera}
 \date{Pertemuan 9 - dilaksanakan pada Minggu 10}
@@ -41,9 +41,9 @@
 \column{0.48\textwidth}
 \begin{block}{Fondasi konseptual}
 \begin{enumerate}
-  \item PDP sebagai model medan ruang--waktu.
-  \item Dari karakteristik orde satu ke mekanisme orde dua.
-  \item Mengapa model nyata sering membutuhkan simulasi komputer.
+  \item PDP dalam pemodelan matematis dan komputasi ilmiah.
+  \item Karakteristik PDP orde satu dan perluasannya ke orde dua.
+  \item Peran solusi analitik dan simulasi numerik pada model nyata.
   \item Klasifikasi: eliptik, parabolik, hiperbolik; linearitas dan kehomogenan dibedakan.
 \end{enumerate}
 \end{block}
@@ -52,17 +52,17 @@
 \begin{enumerate}
   \setcounter{enumi}{4}
   \item Penurunan persamaan gelombang dari vibrating string.
-  \item Karakteristik dan bentuk kanonik.
+  \item Transformasi karakteristik dan reduksi ke bentuk kanonik.
   \item Solusi analitik: d'Alembert, pemisahan variabel, fungsi eigen.
-  \item Linear shallow-water sebagai persamaan gelombang.
-  \item Latihan individu tertulis tangan.
+  \item Linearisasi shallow-water dan persamaan gelombang terpaksa.
+  \item Latihan individu: klasifikasi, IBVP, dan kasus tak homogen.
 \end{enumerate}
 \end{block}
 \end{columns}
 \end{frame}
 
 % 3 -----------------------------------------------------------------
-\begin{frame}{PDP sebagai Model Medan Ruang--Waktu dalam Sains Komputasi}
+\begin{frame}{Persamaan Diferensial Parsial dalam Pemodelan Matematis dan Komputasi Ilmiah}
 \begin{columns}[T,onlytextwidth]
 \column{0.40\textwidth}
 \footnotesize
@@ -83,7 +83,7 @@ Observasi dipadukan dengan model komputasi untuk memperbarui keadaan sistem, men
 \end{frame}
 
 % 4 -----------------------------------------------------------------
-\begin{frame}{Dari Transport Orde Satu ke Mekanisme PDP Orde Dua}
+\begin{frame}{Karakteristik pada PDP Orde Satu dan Perluasannya ke PDP Orde Dua}
 \footnotesize
 \begin{columns}[T,onlytextwidth]
 \column{0.41\textwidth}
@@ -107,7 +107,7 @@ Karakteristik memberi cara geometris untuk membaca \textbf{transfer informasi}.
 Pada PDP orde dua, struktur turunan tertinggi membedakan mekanisme yang berbeda.
 
 \vspace{0.10cm}
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.85cm} >{\raggedright\arraybackslash}p{4.75cm}@{}}
+\scriptsize\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.15cm} >{\raggedright\arraybackslash}p{4.35cm}@{}}
 \toprule
 \textbf{Mekanisme} & \textbf{Perilaku utama}\\
 \midrule
@@ -120,7 +120,7 @@ Gelombang & gangguan merambat dengan kecepatan hingga; informasi memiliki domain
 \end{frame}
 
 % 5 -----------------------------------------------------------------
-\begin{frame}{Banyak Sistem Nyata Digovern oleh Persamaan Diferensial}
+\begin{frame}{Contoh Model Diferensial dalam Sains dan Rekayasa}
 \begin{columns}[T,onlytextwidth]
 \column{0.49\textwidth}
 \centering
@@ -143,7 +143,7 @@ Gelombang & gangguan merambat dengan kecepatan hingga; informasi memiliki domain
 \end{frame}
 
 % 6 -----------------------------------------------------------------
-\begin{frame}{Mengapa Simulasi Numerik Menjadi Diperlukan?}
+\begin{frame}{Peran Solusi Analitik dan Simulasi Numerik}
 \begin{columns}[T,onlytextwidth]
 \column{0.47\textwidth}
 \begin{block}{Pada model ideal}
@@ -174,7 +174,7 @@ Solusi analitik tetap penting sebagai \textbf{pemahaman dan benchmark}. Simulasi
 \end{frame}
 
 % 7 -----------------------------------------------------------------
-\begin{frame}{Contoh Governing PDE yang Digunakan dalam Aplikasi}
+\begin{frame}{Contoh Persamaan Pengatur pada Model Aplikasi}
 \scriptsize
 \renewcommand{\arraystretch}{1.18}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.55cm} >{\raggedright\arraybackslash}p{6.3cm} >{\raggedright\arraybackslash}p{3.4cm}@{}}
@@ -193,7 +193,7 @@ Struktur & $\rho u_{tt}-\nabla\cdot\sigma(u)=f$ & dinamika elastik: hiperbolik\\
 \end{frame}
 
 % 8 -----------------------------------------------------------------
-\begin{frame}{Tiga Pertanyaan yang Harus Dibedakan}
+\begin{frame}{Klasifikasi Berdasarkan Linearitas, Kehomogenan, dan Tipe}
 \begin{columns}[T,onlytextwidth]
 \column{0.31\textwidth}
 \begin{block}{Linear atau nonlinear?}
@@ -256,138 +256,151 @@ Hiperbolik & $>0$ & terdapat dua arah karakteristik real.\\
 \end{frame}
 
 % 10 ----------------------------------------------------------------
-\begin{frame}{Mengapa Namanya Eliptik, Parabolik, dan Hiperbolik?}
+\begin{frame}{Diskriminan dan Geometri Bentuk Kuadratik}
 \begin{columns}[T,onlytextwidth]
-\column{0.48\textwidth}
+\column{0.49\textwidth}
 \small
-Bentuk kuadratik
+Principal part
 \[
-Ax^2+2Bxy+Cy^2+Dx+Ey+F=0
+L_2u=A u_{xx}+2B u_{xy}+C u_{yy}
 \]
-mempunyai diskriminan yang sama,
+berkaitan dengan bentuk kuadratik
 \[
-\Delta=B^2-AC.
+Q(\alpha,\beta)=A\alpha^2+2B\alpha\beta+C\beta^2.
 \]
-Setelah rotasi/translasi koordinat, tanda $\Delta$ membedakan ellipse, parabola, dan hyperbola.
+Tanda
+\[
+\Delta=B^2-AC
+\]
+menentukan signature bentuk kuadratik tersebut. Hal yang sama terjadi pada klasifikasi irisan kerucut setelah rotasi koordinat.
 
-\vspace{0.15cm}
-\begin{block}{Tetapi hati-hati}
-Nama tersebut tidak berarti grafik solusi $u(x,y)$ berbentuk ellipse, parabola, atau hyperbola. Hubungan geometris yang relevan untuk PDP muncul melalui \textbf{arah karakteristik}.
+\vspace{0.10cm}
+\begin{block}{Makna untuk PDP}
+Istilah eliptik, parabolik, dan hiperbolik berasal dari struktur aljabar principal part. \textbf{Bukan} karena grafik solusi $u$ berbentuk ellipse, parabola, atau hyperbola.
 \end{block}
-\column{0.50\textwidth}
+\column{0.48\textwidth}
 \centering
-\includegraphics[width=.98\linewidth,height=4.65cm,keepaspectratio]{figures/conic_discriminant.png}
+\includegraphics[width=.98\linewidth,height=4.70cm,keepaspectratio]{figures/conic_discriminant.png}
 \end{columns}
 \end{frame}
 
 % 11 ----------------------------------------------------------------
-\begin{frame}{Dari $u_{xx}$ ke $(dy)^2$: Asal Persamaan Karakteristik}
+\begin{frame}{Persamaan Karakteristik dari Transformasi Koordinat}
 \small
-Ambil koordinat baru $\xi=\phi(x,y)$ dan $\eta=\psi(x,y)$, dengan $u(x,y)=U(\xi,\eta)$. Aturan rantai memberi, pada bagian orde dua,
+Ambil transformasi $\xi=\phi(x,y)$, $\eta=\psi(x,y)$ dengan Jacobian tidak nol, dan tulis $u(x,y)=U(\xi,\eta)$. Pada bagian orde dua,
 \[
- u_{xx}=U_{\xi\xi}\phi_x^2+2U_{\xi\eta}\phi_x\psi_x+U_{\eta\eta}\psi_x^2+\cdots
+u_{xx}=U_{\xi\xi}\phi_x^2+2U_{\xi\eta}\phi_x\psi_x+U_{\eta\eta}\psi_x^2+\text{orde rendah},
 \]
-serta bentuk serupa untuk $u_{xy}$ dan $u_{yy}$.
+dengan bentuk serupa untuk $u_{xy}$ dan $u_{yy}$. Koefisien $U_{\xi\xi}$ menjadi
+\[
+A\phi_x^2+2B\phi_x\phi_y+C\phi_y^2.
+\]
+Agar $\xi=\phi(x,y)=\text{konstan}$ menjadi koordinat karakteristik, koefisien tersebut dibuat nol.
 
-Koefisien $U_{\xi\xi}$ dalam principal part adalah
+Pada kurva level $\phi=\text{konstan}$,
 \[
- A\phi_x^2+2B\phi_x\phi_y+C\phi_y^2.
+d\phi=\phi_x\,dx+\phi_y\,dy=0.
 \]
-Pada kurva level $\phi(x,y)=\text{konstan}$ berlaku
-\[
- d\phi=\phi_x\,dx+\phi_y\,dy=0.
-\]
-Karena $(\phi_x,\phi_y)$ tegak lurus arah tangent $(dx,dy)$, secara proporsional dapat diambil $\phi_x\sim dy$, $\phi_y\sim-dx$. Maka
+Karena $(\phi_x,\phi_y)$ normal terhadap tangent $(dx,dy)$, dapat diambil secara proporsional $\phi_x\sim dy$ dan $\phi_y\sim-dx$. Maka
 \[
 \boxed{A(dy)^2-2B\,dx\,dy+C(dx)^2=0.}
 \]
-\pdpnote{$u_{xx}$ tidak ``berubah menjadi'' $dy^2$; persamaan kuadratik ini muncul saat kita mencari arah koordinat yang menghilangkan salah satu turunan orde dua.}
+\pdpnote{$(dy)^2$ tidak berasal dari perubahan $u_{xx}\mapsto(dy)^2$; ia muncul dari geometri kurva koordinat yang mereduksi principal part.}
 \end{frame}
 
 % 12 ----------------------------------------------------------------
-\begin{frame}{Prosedur Memeriksa Klasifikasi dan Bentuk Kanonik}
-\begin{columns}[T,onlytextwidth]
-\column{0.46\textwidth}
-\begin{block}{Langkah pemeriksaan}
-\begin{enumerate}
-  \item Identifikasi variabel bebas.
-  \item Ambil hanya principal part.
-  \item Baca $A$, $B$, $C$ dari $A u_{xx}+2B u_{xy}+C u_{yy}$.
-  \item Hitung $\Delta=B^2-AC$.
-  \item Cari kurva karakteristik jika $\Delta\ge0$.
-  \item Pilih koordinat karakteristik / rotasi yang menyederhanakan principal part.
-\end{enumerate}
-\end{block}
-\column{0.50\textwidth}
-\begin{block}{Bentuk kanonik lokal}
-Setelah perubahan koordinat dan skala yang sesuai:
+\begin{frame}{Transformasi Koordinat dan Reduksi ke Bentuk Kanonik}
+\small
+Untuk PDP linear orde dua
 \[
-\begin{array}{ll}
-\text{eliptik:} & U_{\xi\xi}+U_{\eta\eta}+\text{orde rendah}=\widetilde G,\\[3pt]
-\text{parabolik:} & U_{\xi\xi}+\text{orde rendah}=\widetilde G,\\[3pt]
-\text{hiperbolik:} & U_{\xi\eta}+\text{orde rendah}=\widetilde G.
-\end{array}
+A u_{xx}+2B u_{xy}+C u_{yy}+\text{orde rendah}=G,
 \]
-\end{block}
-\end{columns}
+perubahan koordinat halus
+\[
+\xi=\xi(x,y),\qquad \eta=\eta(x,y),\qquad
+J=\frac{\partial(\xi,\eta)}{\partial(x,y)}\neq0
+\]
+tidak mengubah tipe lokal PDP. Dengan pemilihan koordinat yang sesuai, principal part direduksi ke salah satu bentuk standar.
+
+\vspace{0.06cm}
+\renewcommand{\arraystretch}{1.13}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{1.9cm} >{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}p{5.0cm}@{}}
+\toprule
+\textbf{Tipe} & \textbf{Bentuk kanonik principal part} & \textbf{Koordinat yang digunakan}\\
+\midrule
+Eliptik & $U_{\xi\xi}+U_{\eta\eta}$ & diagonalization/rotation; tidak ada karakteristik real.\\[3pt]
+Parabolik & $U_{\xi\xi}$ & satu keluarga karakteristik real berulang.\\[3pt]
+Hiperbolik & $U_{\xi\eta}$ atau $U_{\xi\xi}-U_{\eta\eta}$ & dua keluarga karakteristik real.\\
+\bottomrule
+\end{tabular}
+
+\vspace{0.10cm}
+\begin{beamercolorbox}[sep=.09cm,wd=\textwidth]{normal text}
+\centering\small
+\textbf{Bentuk kanonik} menunjukkan bahwa PDP dengan koefisien yang tampak berbeda dapat memiliki principal part yang ekuivalen secara lokal setelah transformasi koordinat yang nonsingular.
+\end{beamercolorbox}
 \end{frame}
 
 % 13 ----------------------------------------------------------------
-\begin{frame}{Model Fisis: Dawai yang Bergetar}
+\begin{frame}{Model Vibrasi Dawai Satu Dimensi}
 \begin{columns}[T,onlytextwidth]
-\column{0.49\textwidth}
+\column{0.53\textwidth}
 \centering
-\begin{tikzpicture}[x=.9cm,y=.9cm]
-\draw[pdpSlate,line width=1.0pt] (0,0)--(6,0);
-\draw[pdpTeal,line width=1.5pt] plot[smooth] coordinates {(0,0)(1,.25)(2,.65)(3,.9)(4,.65)(5,.25)(6,0)};
-\fill[pdpNavy] (0,0) circle (2pt); \fill[pdpNavy] (6,0) circle (2pt);
-\draw[pdpAmber,line width=1pt] (2.15,.66)--(2.95,.88);
-\draw[pdpAmber,line width=1pt] (3.05,.88)--(3.85,.70);
-\node[font=\scriptsize] at (3,-.35) {$x$};
-\node[font=\scriptsize] at (3,1.22) {$u(x,t)$};
-\node[font=\scriptsize,text=pdpSlate] at (3,-.72) {segmen kecil $[x,x+\Delta x]$};
+\begin{tikzpicture}[x=.88cm,y=.88cm,>=stealth]
+\draw[pdpSlate,line width=.8pt] (0,0)--(6.2,0);
+\draw[pdpTeal,line width=1.35pt] plot[smooth] coordinates {(0,0)(1,.18)(2,.48)(3,.76)(4,.56)(5,.25)(6.2,0)};
+\draw[pdpAmber,line width=2.1pt] (2.35,.58)--(3.80,.63);
+\fill[pdpNavy] (2.35,.58) circle (1.7pt); \fill[pdpNavy] (3.80,.63) circle (1.7pt);
+\draw[->,pdpNavy,line width=.9pt] (2.35,.58)--(1.45,.32) node[above left,font=\scriptsize] {$T$};
+\draw[->,pdpNavy,line width=.9pt] (3.80,.63)--(4.72,.88) node[above right,font=\scriptsize] {$T$};
+\draw[dashed,pdpLine] (2.35,.58)--(1.35,.58);
+\draw[dashed,pdpLine] (3.80,.63)--(4.80,.63);
+\node[font=\scriptsize] at (3.08,.35) {$\Delta x$};
+\node[font=\scriptsize,text=pdpSlate] at (3.1,-.42) {segmen $[x,x+\Delta x]$};
+\node[font=\scriptsize] at (3.25,1.12) {$u(x,t)$};
 \end{tikzpicture}
-\column{0.47\textwidth}
+\column{0.44\textwidth}
 \begin{block}{Asumsi model linear}
 \begin{itemize}
-  \item Dawai homogen dengan rapat massa linear $\rho$ konstan.
-  \item Tegangan $T$ dianggap konstan.
-  \item Gerak hanya transversal; perpindahan longitudinal diabaikan.
+  \item Dawai homogen, rapat massa linear $\rho$ konstan.
+  \item Tegangan $T$ seragam dan tidak berubah terhadap waktu.
+  \item Gerak hanya transversal.
   \item Dawai fleksibel; kekakuan lentur diabaikan.
   \item Kemiringan kecil: $|u_x|\ll1$.
   \item Tidak ada redaman dan gaya luar pada model dasar.
 \end{itemize}
 \end{block}
 \end{columns}
-\vspace{0.10cm}
-\pdpnote{Asumsi kecil-slope adalah kunci linearitas. Jika deformasi besar atau tegangan berubah, model gelombang linear tidak lagi memadai.}
+\vspace{0.05cm}
+\pdpnote{$u(x,t)$ adalah simpangan transversal titik material yang posisi referensinya $x$.}
 \end{frame}
 
 % 14 ----------------------------------------------------------------
-\begin{frame}{Penurunan Persamaan Gelombang dari Neraca Gaya}
+\begin{frame}{Derivasi Persamaan Gelombang Satu Dimensi dari Hukum II Newton}
 \small
-Ambil segmen $[x,x+\Delta x]$. Komponen vertikal gaya tegangan adalah
+\begin{block}{Hukum II Newton}
+Resultan gaya sama dengan laju perubahan momentum. Untuk massa konstan,
 \[
-T\sin\theta(x+\Delta x,t)-T\sin\theta(x,t).
+\boxed{\sum \mathbf F=m\mathbf a.}
 \]
-Untuk kemiringan kecil,
+Pada segmen dawai $[x,x+\Delta x]$, massa adalah $m\approx\rho\Delta x$ dan percepatan transversal adalah $u_{tt}(x,t)$.
+\end{block}
+
+Komponen vertikal tegangan pada kedua ujung memberi
 \[
-\sin\theta\approx\tan\theta=u_x.
+\sum F_y=T\sin\theta(x+\Delta x,t)-T\sin\theta(x,t).
 \]
-Maka resultan gaya vertikal
+Untuk $|u_x|\ll1$, $\sin\theta\approx\tan\theta=u_x$, sehingga
 \[
-T\bigl[u_x(x+\Delta x,t)-u_x(x,t)\bigr]
-\approx T u_{xx}(x,t)\,\Delta x.
+\rho\Delta x\,u_{tt}
+\approx T\,[u_x(x+\Delta x,t)-u_x(x,t)].
 \]
-Massa segmen adalah $\rho\Delta x$. Hukum II Newton memberi
+Bagi dengan $\Delta x$ dan ambil limit $\Delta x\to0$:
 \[
-\rho\Delta x\,u_{tt}=T u_{xx}\Delta x.
+\boxed{\rho u_{tt}=T u_{xx}},\qquad
+\boxed{u_{tt}=c^2u_{xx}},\qquad c=\sqrt{T/\rho}.
 \]
-Setelah membagi dengan $\rho\Delta x$,
-\[
-\boxed{u_{tt}=c^2u_{xx}},\qquad \boxed{c=\sqrt{\frac{T}{\rho}}}.
-\]
-\pdpnote{$c$ adalah kecepatan rambat gangguan pada model dawai linear.}
+\pdpnote{Keseimbangan komponen horizontal konsisten dengan asumsi tegangan $T$ seragam pada model linear.}
 \end{frame}
 
 % 15 ----------------------------------------------------------------
@@ -421,112 +434,109 @@ Persamaan gelombang adalah \textbf{hiperbolik}.
 \end{frame}
 
 % 16 ----------------------------------------------------------------
-\begin{frame}{Karakteristik dan Bentuk Kanonik Persamaan Gelombang}
+\begin{frame}{Koordinat Karakteristik dan Bentuk Kanonik Persamaan Gelombang}
 \small
-Persamaan karakteristiknya
+Untuk
 \[
--c^2(dt)^2+(dx)^2=0,
+u_{tt}-c^2u_{xx}=0,
 \]
-sehingga
+persamaan karakteristik memberi
 \[
-\frac{dx}{dt}=\pm c,
-\qquad
-x-ct=\text{konstan},\quad x+ct=\text{konstan}.
+-c^2(dt)^2+(dx)^2=0
+\quad\Longrightarrow\quad
+\frac{dx}{dt}=\pm c.
 \]
-Ambil koordinat karakteristik
+Dua keluarga karakteristik adalah
 \[
-\xi=x-ct,\qquad \eta=x+ct.
+x-ct=\text{konstan},\qquad x+ct=\text{konstan}.
 \]
-Jika $u(x,t)=U(\xi,\eta)$, maka
+Pilih
 \[
- u_{xx}=U_{\xi\xi}+2U_{\xi\eta}+U_{\eta\eta},
+\xi=x-ct,\qquad \eta=x+ct,
 \]
+sehingga, untuk $u(x,t)=U(\xi,\eta)$,
 \[
- u_{tt}=c^2\left(U_{\xi\xi}-2U_{\xi\eta}+U_{\eta\eta}\right).
+u_{tt}-c^2u_{xx}=-4c^2U_{\xi\eta}.
 \]
-Jadi
+Jadi persamaan gelombang ekuivalen, dalam koordinat karakteristik, dengan
 \[
- u_{tt}-c^2u_{xx}=-4c^2U_{\xi\eta}=0,
-\qquad
 \boxed{U_{\xi\eta}=0.}
 \]
-Inilah bentuk kanonik hiperbolik untuk persamaan gelombang satu dimensi.
+\pdpnote{Bentuk $U_{\xi\eta}=0$ adalah canonical form hiperbolik; melalui kombinasi linear koordinat ia ekuivalen dengan $V_{\alpha\alpha}-V_{\beta\beta}=0$.}
 \end{frame}
 
 % 17 ----------------------------------------------------------------
-\begin{frame}{Solusi d'Alembert: Dua Keluarga Gelombang Menjalar}
+\begin{frame}{Masalah Cauchy pada Garis Tak Berhingga dan Formula d'Alembert}
 \begin{columns}[T,onlytextwidth]
-\column{0.51\textwidth}
+\column{0.57\textwidth}
 \small
-Dari
+Pertimbangkan masalah Cauchy
 \[
-U_{\xi\eta}=0
+x\in\mathbb R,\qquad t>0,
 \]
-diperoleh
 \[
-U(\xi,\eta)=F(\xi)+G(\eta).
+u_{tt}=c^2u_{xx},\qquad
+u(x,0)=f(x),\qquad u_t(x,0)=g(x).
 \]
-Kembali ke $(x,t)$:
+Dari bentuk kanonik $U_{\xi\eta}=0$ dan kondisi awal diperoleh
 \[
-\boxed{u(x,t)=F(x-ct)+G(x+ct).}
+\boxed{
+ u(x,t)=\frac12\bigl[f(x-ct)+f(x+ct)\bigr]
+ +\frac{1}{2c}\int_{x-ct}^{x+ct}g(s)\,ds.}
 \]
-
-\begin{block}{Makna}
-$F(x-ct)$ bergerak ke kanan dan $G(x+ct)$ bergerak ke kiri tanpa mengubah bentuk pada model ideal.
+\begin{block}{Domain of dependence}
+Nilai $u(x,t)$ hanya bergantung pada data awal di interval $[x-ct,x+ct]$.
 \end{block}
-\column{0.45\textwidth}
+\column{0.39\textwidth}
 \centering
-\includegraphics[width=.98\linewidth,height=4.45cm,keepaspectratio]{figures/wave_characteristics.png}
+\includegraphics[width=.98\linewidth,height=4.55cm,keepaspectratio]{figures/wave_characteristics.png}
 \end{columns}
 \end{frame}
 
 % 18 ----------------------------------------------------------------
-\begin{frame}{Dawai dengan Kedua Ujung Terikat: Pemisahan Variabel}
+\begin{frame}{Masalah Nilai Awal--Batas pada Dawai Berhingga}
 \begin{columns}[T,onlytextwidth]
 \column{0.50\textwidth}
 \small
-Untuk
+Berbeda dari masalah Cauchy pada $\mathbb R$, sekarang domain ruang terbatas:
 \[
- u_{tt}=c^2u_{xx},\quad 0<x<L,
+0<x<L,\qquad t>0.
 \]
-dengan
+Untuk kedua ujung terikat,
 \[
- u(0,t)=u(L,t)=0,
+u(0,t)=u(L,t)=0.
 \]
-ambil
+Ambil
 \[
- u(x,t)=X(x)T(t).
+u(x,t)=X(x)T(t).
 \]
-Substitusi memberi
+Substitusi ke $u_{tt}=c^2u_{xx}$ memberi
 \[
-\frac{X''}{X}=\frac{T''}{c^2T}=-\lambda.
+\frac{X''}{X}=\frac{T''}{c^2T}=-\lambda,
 \]
-Maka
+sehingga
 \[
-X''+\lambda X=0,
-\qquad
-T''+c^2\lambda T=0.
+X''+\lambda X=0,\qquad T''+c^2\lambda T=0.
 \]
 \column{0.46\textwidth}
-\begin{block}{Masalah nilai eigen}
-Syarat $X(0)=X(L)=0$ menghasilkan
+\begin{block}{Masalah nilai eigen spasial}
+\[
+X(0)=X(L)=0
+\]
+menghasilkan
 \[
 \lambda_n=\left(\frac{n\pi}{L}\right)^2,
-\qquad
-X_n(x)=\sin\left(\frac{n\pi x}{L}\right).
+\qquad X_n(x)=\sin\left(\frac{n\pi x}{L}\right).
 \]
 \end{block}
-\begin{block}{Frekuensi alami}
-\[
-\omega_n=c\sqrt{\lambda_n}=\frac{n\pi c}{L}.
-\]
-Mode yang diizinkan ditentukan oleh geometri domain dan syarat batas.
+\begin{block}{Konsekuensi domain terbatas}
+Boundary condition memilih mode diskret. Pada domain tak berhingga, formula d'Alembert tidak menghasilkan spektrum mode diskret seperti ini.
 \end{block}
 \end{columns}
 \end{frame}
 
 % 19 ----------------------------------------------------------------
-\begin{frame}{Solusi Umum untuk Dawai Terikat}
+\begin{frame}{Ekspansi Eigenfungsi untuk Dawai Berhingga}
 \small
 Dengan kondisi awal
 \[
@@ -554,7 +564,7 @@ Deret Fourier bukan tambahan terpisah: ia menentukan seberapa besar setiap \text
 \end{frame}
 
 % 20 ----------------------------------------------------------------
-\begin{frame}{Contoh Numerik-Analitik: Satu Mode Dawai}
+\begin{frame}{Contoh: Mode Fundamental pada Dawai Berhingga}
 \begin{columns}[T,onlytextwidth]
 \column{0.39\textwidth}
 \small
@@ -582,36 +592,33 @@ T_1=\frac{2\pi}{\omega_1}=10\text{ s}.
 \end{frame}
 
 % 21 ----------------------------------------------------------------
-\begin{frame}{Dari Shallow-Water Nonlinear ke Persamaan Gelombang}
+\begin{frame}{Linearisasi Sistem Air Dangkal Satu Dimensi}
 \begin{columns}[T,onlytextwidth]
-\column{0.51\textwidth}
+\column{0.52\textwidth}
 \small
-Untuk aliran 1D, dasar datar, inviscid, dan tekanan hidrostatik, shallow-water dapat ditulis
+Untuk aliran satu dimensi, dasar datar, inviscid, dan tekanan hidrostatik,
 \[
- h_t+(hu)_x=0,
+h_t+(hu)_x=0,
 \]
 \[
- u_t+u u_x+g h_x=0.
+u_t+u u_x+g h_x=0.
 \]
-Tuliskan
+Ambil keadaan dasar air diam dengan kedalaman konstan $H$ dan tulis
 \[
- h(x,t)=H+\eta(x,t),
+h(x,t)=H+\eta(x,t).
 \]
-dengan $H$ kedalaman rata-rata dan $\eta$ deviasi muka air.
-
-\column{0.45\textwidth}
-\begin{block}{Asumsi linearisasi}
+\column{0.44\textwidth}
+\begin{block}{Asumsi perturbasi kecil}
 \begin{itemize}
   \item $|\eta|/H\ll1$;
-  \item kecepatan $u$ kecil terhadap skala gelombang;
-  \item produk gangguan kecil $(\eta u)_x$ diabaikan;
-  \item nonlinearitas advektif $u u_x$ diabaikan;
-  \item $H$ konstan, dasar datar.
+  \item $|u|/\sqrt{gH}\ll1$;
+  \item produk orde dua $\eta u$ diabaikan;
+  \item nonlinearitas $u u_x$ diabaikan;
+  \item $H$ konstan dan dasar datar.
 \end{itemize}
 \end{block}
 \end{columns}
-\vspace{0.10cm}
-Setelah linearisasi:
+Dengan mempertahankan hanya suku orde pertama,
 \[
 \boxed{\eta_t+H u_x=0},\qquad
 \boxed{u_t+g\eta_x=0}.
@@ -619,120 +626,166 @@ Setelah linearisasi:
 \end{frame}
 
 % 22 ----------------------------------------------------------------
-\begin{frame}{Persamaan Gelombang Air Dangkal Linear}
+\begin{frame}{Persamaan Gelombang dari Sistem Air Dangkal Linear}
 \begin{columns}[T,onlytextwidth]
-\column{0.45\textwidth}
+\column{0.48\textwidth}
 \small
-Diferensiasikan kontinuitas terhadap $t$:
+Dari sistem homogen
 \[
-\eta_{tt}+H u_{xt}=0.
+\eta_t+Hu_x=0,\qquad u_t+g\eta_x=0,
 \]
-Dari persamaan momentum,
+diferensiasikan persamaan pertama terhadap $t$ dan persamaan kedua terhadap $x$:
 \[
-u_t=-g\eta_x
-\quad\Rightarrow\quad
-u_{xt}=-g\eta_{xx}.
+\eta_{tt}+Hu_{xt}=0,
+\qquad
+u_{xt}+g\eta_{xx}=0.
 \]
-Maka
+Eliminasi $u_{xt}$ memberi
 \[
 \boxed{\eta_{tt}-gH\eta_{xx}=0},
-\qquad
-\boxed{c=\sqrt{gH}}.
+\qquad c=\sqrt{gH}.
 \]
-Solusi analitik umum:
-\[
-\boxed{\eta=F(x-ct)+G(x+ct)}.
-\]
-\column{0.52\textwidth}
+\column{0.48\textwidth}
 \centering
-\includegraphics[width=\linewidth,height=4.65cm,keepaspectratio]{figures/shallow_water_gaussian.png}
+\includegraphics[width=\linewidth,height=4.55cm,keepaspectratio]{figures/shallow_water_gaussian.png}
 \end{columns}
+\vspace{0.06cm}
+\pdpnote{Pada garis tak berhingga, solusi analitiknya kembali mengikuti formula d'Alembert dengan kecepatan $c=\sqrt{gH}$.}
 \end{frame}
 
 % 23 ----------------------------------------------------------------
-\begin{frame}{Interpretasi Solusi Shallow-Water Linear}
+\begin{frame}{Sistem Air Dangkal Linear dengan Sumber dan Gaya Luar}
 \small
-Jika kondisi awal adalah elevasi $\eta(x,0)=f(x)$ dan kecepatan awal nol, maka
+Tambahkan sumber massa $S(x,t)$ pada kontinuitas dan percepatan eksternal $Q(x,t)$ pada momentum:
 \[
-\boxed{\eta(x,t)=\frac12f(x-ct)+\frac12f(x+ct)}.
-\]
-Pulsa awal terpecah menjadi dua gelombang dengan amplitudo setengah yang bergerak berlawanan arah.
-
-\vspace{0.20cm}
-Untuk satu gelombang yang hanya bergerak ke kanan, kondisi awal kecepatan harus kompatibel:
-\[
-\eta(x,t)=f(x-ct),
+\eta_t+Hu_x=S(x,t),
 \qquad
-u(x,t)=\frac{c}{H}f(x-ct)=\sqrt{\frac{g}{H}}f(x-ct).
+u_t+g\eta_x=Q(x,t).
 \]
-\begin{block}{Makna pemodelan}
-Persamaan gelombang klasik muncul sebagai \textbf{aproksimasi linear} dari sistem shallow-water nonlinear. Karena itu, sebelum memakai solusi analitik gelombang, kita harus mengetahui asumsi yang membuat linearisasi tersebut sah.
+Diferensiasikan persamaan pertama terhadap $t$ dan persamaan kedua terhadap $x$:
+\[
+\eta_{tt}+Hu_{xt}=S_t,
+\qquad
+u_{xt}+g\eta_{xx}=Q_x.
+\]
+Eliminasi $u_{xt}$ menghasilkan
+\[
+\boxed{\eta_{tt}-gH\eta_{xx}=S_t-HQ_x.}
+\]
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Interpretasi}
+$S$ dapat merepresentasikan inflow/rainfall yang diidealkan; $Q$ dapat merepresentasikan percepatan eksternal, misalnya forcing tekanan atau angin yang telah direduksi ke model 1D.
 \end{block}
+\column{0.48\textwidth}
+\begin{block}{Kasus homogen}
+Jika $S=Q=0$, model kembali menjadi
+\[
+\eta_{tt}-gH\eta_{xx}=0.
+\]
+Jadi persamaan gelombang homogen adalah kasus khusus model terpaksa.
+\end{block}
+\end{columns}
 \end{frame}
 
 % 24 ----------------------------------------------------------------
-\begin{frame}{Latihan Individu: Klasifikasi, Kanonik, dan Solusi Analitik}
+\begin{frame}{Reduksi Mode pada Persamaan Gelombang Tak Homogen}
 \small
-\textbf{Bagian A - karakteristik dan bentuk kanonik}
+Misalkan pada domain $0<x<L$ diperoleh
+\[
+\eta_{tt}-c^2\eta_{xx}=F_0\sin\left(\frac{\pi x}{L}\right),
+\qquad
+\eta(0,t)=\eta(L,t)=0.
+\]
+Karena forcing berada pada mode eigen pertama, ambil
+\[
+\eta(x,t)=a(t)\sin\left(\frac{\pi x}{L}\right).
+\]
+Substitusi menghasilkan PDB amplitudo
+\[
+\boxed{a''(t)+\left(\frac{\pi c}{L}\right)^2a(t)=F_0.}
+\]
+Untuk kondisi awal diam $a(0)=a'(0)=0$,
+\[
+\boxed{a(t)=\frac{F_0}{\omega_1^2}\bigl(1-\cos\omega_1 t\bigr)},
+\qquad \omega_1=\frac{\pi c}{L}.
+\]
+\begin{beamercolorbox}[sep=.09cm,wd=\textwidth]{normal text}
+\centering\small
+Pola penyelesaian: identifikasi forcing, pilih basis eigen yang memenuhi boundary condition, lalu selesaikan PDB untuk koefisien waktu.
+\end{beamercolorbox}
+\end{frame}
+
+\begin{frame}{Latihan Individu I: Klasifikasi dan Reduksi ke Bentuk Kanonik}
+\small
+Diberikan PDP linear orde dua
 \[
 \boxed{u_{xx}+4u_{xt}+3u_{tt}=0.}
 \]
 \begin{enumerate}
-  \item Tentukan $A,B,C$ dan klasifikasikan PDP.
+  \item Identifikasi principal part dan tentukan $A$, $B$, $C$ pada bentuk $A u_{xx}+2B u_{xt}+C u_{tt}$.
+  \item Klasifikasikan PDP menggunakan diskriminan.
   \item Tentukan dua keluarga kurva karakteristik.
-  \item Pilih koordinat kanonik dan ubah PDP ke bentuk kanonik.
-  \item Tuliskan bentuk umum solusi analitiknya.
+  \item Pilih koordinat karakteristik $(\xi,\eta)$ dan reduksi PDP ke bentuk kanonik.
+  \item Tentukan bentuk umum solusi analitik pada koordinat asli $(x,t)$.
+  \item Sketsakan dua keluarga karakteristik yang melalui titik $(0,0)$ pada bidang $x$--$t$.
 \end{enumerate}
-
-\vspace{0.16cm}
-\textbf{Bagian B - vibrating string dengan angka}
-\[
- u_{tt}-4u_{xx}=0,\quad 0<x<6,
-\]
-\[
- u(0,t)=u(6,t)=0,
-\]
-\[
- u(x,0)=0.12\sin\frac{\pi x}{6}+0.05\sin\frac{\pi x}{3},
-\qquad u_t(x,0)=0.
-\]
-Tentukan solusi analitik dan gambarkan $u(x,t)$ untuk $t=0,1,2$ s.
 \end{frame}
 
 % 25 ----------------------------------------------------------------
-\begin{frame}{Latihan Lanjutan: Kasus Nonhomogen}
+\begin{frame}{Latihan Individu II: Masalah Nilai Awal--Batas pada Dawai Berhingga}
 \small
-Sebagai pengayaan, pertimbangkan
+Sebuah dawai ideal panjang $L=6$ m mempunyai kecepatan rambat $c=2$ m/s dan kedua ujungnya terikat. Modelnya
 \[
-\boxed{u_{tt}-4u_{xx}=0.1\sin\left(\frac{\pi x}{6}\right)},
-\quad 0<x<6,
+u_{tt}=4u_{xx},\qquad 0<x<6,\quad t>0,
 \]
-dengan
 \[
- u(0,t)=u(6,t)=0,
-\qquad
-u(x,0)=0,
+u(0,t)=u(6,t)=0.
+\]
+Kondisi awal
+\[
+u(x,0)=0.12\sin\left(\frac{\pi x}{6}\right)
++0.05\sin\left(\frac{2\pi x}{6}\right),
 \qquad
 u_t(x,0)=0.
 \]
+\begin{enumerate}
+  \item Tentukan mode eigen yang aktif dan frekuensi sudut masing-masing mode.
+  \item Tuliskan solusi analitik $u(x,t)$.
+  \item Gambarkan profil $u(x,t)$ untuk $t=0$, $1$, dan $2$ s.
+  \item Jelaskan perubahan bentuk profil sebagai superposisi dua mode normal.
+\end{enumerate}
+\end{frame}
 
-\begin{block}{Hint}
-Karena forcing hanya berada pada mode pertama, coba
+\begin{frame}{Latihan Individu III: Persamaan Gelombang Tak Homogen}
+\small
+Sebagai model sederhana elevasi muka air pada kanal $0<x<6$, pertimbangkan
 \[
- u(x,t)=a(t)\sin\left(\frac{\pi x}{6}\right).
+\boxed{\eta_{tt}-4\eta_{xx}=0.08\sin\left(\frac{\pi x}{6}\right)},
 \]
-Substitusi ke PDP akan menghasilkan PDB
 \[
- a''(t)+\left(\frac{\pi}{3}\right)^2a(t)=0.1.
+\eta(0,t)=\eta(6,t)=0,
+\qquad
+\eta(x,0)=0,
+\qquad
+\eta_t(x,0)=0.
 \]
-Gunakan kondisi awal $a(0)=a'(0)=0$.
+\begin{enumerate}
+  \item Klasifikasikan PDP dan identifikasi bagian homogen serta forcing.
+  \item Gunakan $\eta(x,t)=a(t)\sin(\pi x/6)$ dan turunkan PDB untuk $a(t)$.
+  \item Tentukan solusi analitik menggunakan kondisi awal.
+  \item Gambarkan $\eta(x,t)$ pada sedikitnya tiga waktu dan jelaskan pengaruh forcing terhadap amplitudo.
+\end{enumerate}
+\begin{block}{Petunjuk}
+PDB amplitudo yang seharusnya diperoleh adalah
+\[
+a''(t)+\left(\frac{\pi}{3}\right)^2a(t)=0.08.
+\]
 \end{block}
-
-Gambarkan solusi untuk sedikitnya tiga waktu dan jelaskan makna forcing terhadap amplitudo getaran.
 \end{frame}
 
 % 26 ----------------------------------------------------------------
-\begin{frame}{Ketentuan Laporan Latihan}
+\begin{frame}{Ketentuan Penulisan Laporan Individu}
 \begin{columns}[T,onlytextwidth]
 \column{0.49\textwidth}
 \begin{block}{Format}
@@ -758,25 +811,25 @@ Ketepatan matematika, keterlacakan langkah, kualitas gambar, dan kemampuan mengh
 \end{frame}
 
 % 27 ----------------------------------------------------------------
-\begin{frame}{Ringkasan Pertemuan}
+\begin{frame}{Rangkuman}
 \small
 \begin{columns}[T,onlytextwidth]
 \column{0.31\textwidth}
-\begin{block}{Model}
-Persamaan gelombang diperoleh dari hukum fisika dan asumsi. Pada vibrating string, small-slope dan tension konstan menghasilkan model linear.
+\begin{block}{Pemodelan}
+Persamaan gelombang satu dimensi diperoleh dari Hukum II Newton pada dawai dengan asumsi homogen, tegangan konstan, gerak transversal, dan kemiringan kecil.
 \end{block}
 \column{0.31\textwidth}
-\begin{block}{Struktur}
-Diskriminan principal part menentukan tipe. Untuk persamaan gelombang terdapat dua keluarga karakteristik real dan bentuk kanonik $U_{\xi\eta}=0$.
+\begin{block}{Klasifikasi dan kanonik}
+Principal part menentukan tipe. Dua keluarga karakteristik persamaan gelombang menghasilkan transformasi $\xi=x-ct$, $\eta=x+ct$ dan canonical form $U_{\xi\eta}=0$.
 \end{block}
 \column{0.31\textwidth}
-\begin{block}{Solusi}
-D'Alembert menjelaskan gelombang menjalar; pemisahan variabel dan fungsi eigen menjelaskan mode pada domain terbatas. Shallow-water linear kembali menghasilkan persamaan gelombang.
+\begin{block}{Solusi dan domain}
+Formula d'Alembert berlaku pada $x\in\mathbb R$. Pada $0<x<L$, boundary condition menghasilkan mode eigen diskret. Sumber/gaya luar menghasilkan persamaan gelombang tak homogen.
 \end{block}
 \end{columns}
-\vspace{0.18cm}
+\vspace{0.15cm}
 \centering
-\pdpnote{Pertemuan berikutnya dapat memakai solusi analitik ini sebagai benchmark sebelum membangun metode numerik untuk PDP orde dua.}
+\pdpnote{Solusi analitik ini menjadi benchmark penting sebelum metode numerik PDP orde dua diperkenalkan.}
 \end{frame}
 
 \end{document}

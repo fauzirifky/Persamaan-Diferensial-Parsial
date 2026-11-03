@@ -24,16 +24,17 @@ Folder: `slides/week-09-persamaan-gelombang/`
 
 Alur materi:
 
-1. PDP sebagai model medan ruang-waktu dalam sains komputasi dan digital twin.
-2. Hubungan konsep karakteristik PDP orde satu dengan transfer informasi.
-3. Kebutuhan simulasi numerik pada geometri, parameter, forcing, dan coupling yang kompleks.
-4. Perbedaan klasifikasi eliptik/parabolik/hiperbolik dengan linear/nonlinear dan homogen/nonhomogen.
-5. Geometri diskriminan dan asal persamaan karakteristik.
-6. Penurunan persamaan gelombang dari vibrating string beserta asumsi model.
-7. Klasifikasi dan bentuk kanonik persamaan gelombang.
-8. Solusi d'Alembert, pemisahan variabel, fungsi eigen, dan visualisasi solusi.
-9. Linearisasi shallow-water nonlinear hingga persamaan gelombang linear.
-10. Latihan individu tertulis tangan: klasifikasi, bentuk kanonik, solusi analitik, dan visualisasi.
+1. Persamaan Diferensial Parsial dalam pemodelan matematis dan komputasi ilmiah.
+2. Karakteristik pada PDP orde satu dan perluasannya ke PDP orde dua.
+3. Peran solusi analitik dan simulasi numerik pada model nyata.
+4. Klasifikasi berdasarkan linearitas, kehomogenan, dan tipe; principal part dan diskriminan.
+5. Transformasi koordinat, persamaan karakteristik, dan reduksi ke bentuk kanonik.
+6. Derivasi persamaan gelombang satu dimensi dari Hukum II Newton pada dawai.
+7. Klasifikasi, koordinat karakteristik, dan canonical form persamaan gelombang.
+8. Masalah Cauchy pada garis tak berhingga dan formula d'Alembert.
+9. Masalah nilai awal-batas pada dawai berhingga, pemisahan variabel, dan eigenfungsi.
+10. Linearisasi sistem air dangkal satu dimensi dan persamaan gelombang homogen/tak homogen.
+11. Latihan individu tertulis tangan: klasifikasi-kanonik, IBVP dawai, dan forcing.
 
 ## Struktur
 

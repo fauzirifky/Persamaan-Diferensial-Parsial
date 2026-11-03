@@ -1,0 +1,72 @@
+% Shared Beamer style for MA 25-31018 Persamaan Diferensial Parsial
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{graphicx}
+\usepackage{booktabs,array}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc,positioning,decorations.pathreplacing}
+
+\definecolor{pdpNavy}{HTML}{0F172A}
+\definecolor{pdpTeal}{HTML}{0F766E}
+\definecolor{pdpMint}{HTML}{CCFBF1}
+\definecolor{pdpAmber}{HTML}{F59E0B}
+\definecolor{pdpSlate}{HTML}{334155}
+\definecolor{pdpBg}{HTML}{F8FAFC}
+\definecolor{pdpLine}{HTML}{CBD5E1}
+\definecolor{pdpSoftTeal}{HTML}{ECFDF5}
+\definecolor{pdpSoftAmber}{HTML}{FFF7ED}
+
+\setbeamercolor{normal text}{fg=pdpNavy,bg=pdpBg}
+\setbeamercolor{frametitle}{fg=pdpNavy,bg=pdpBg}
+\setbeamercolor{title}{fg=pdpNavy}
+\setbeamercolor{subtitle}{fg=pdpTeal}
+\setbeamercolor{block title}{fg=white,bg=pdpTeal}
+\setbeamercolor{block body}{fg=pdpNavy,bg=white}
+\setbeamercolor{alerted text}{fg=pdpAmber!85!black}
+\setbeamerfont{title}{series=\bfseries,size=\Large}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamerfont{block title}{series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\color{pdpTeal}$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\color{pdpAmber}$\bullet$}
+\setbeamersize{text margin left=.65cm,text margin right=.65cm}
+
+\newcommand{\pdpfooter}[2]{%
+\setbeamertemplate{footline}{%
+  \leavevmode\hbox{%
+  \begin{beamercolorbox}[wd=.34\paperwidth,ht=2.55ex,dp=1.05ex,leftskip=.65cm]{author in head/foot}%
+    \scriptsize Tim Pengajar PDP
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.40\paperwidth,ht=2.55ex,dp=1.05ex,center]{title in head/foot}%
+    \scriptsize #1
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.26\paperwidth,ht=2.55ex,dp=1.05ex,rightskip=.65cm plus1fil]{date in head/foot}%
+    \scriptsize Rifky Fauzi\hfill\insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}}\vskip0pt% 
+}}
+
+\newcommand{\pdporangeline}{\vspace{0.15em}\textcolor{pdpAmber}{\rule{0.9cm}{1.3pt}}\vspace{0.35em}}
+\newcommand{\pdpnote}[1]{{\scriptsize\color{pdpSlate}#1}}
+\newcommand{\pdpkey}[1]{\textbf{\color{pdpTeal}#1}}
+\newcommand{\pdpsource}[1]{{\fontsize{5.5}{6.2}\selectfont\color{pdpSlate}#1}}
+\newcommand{\pdppill}[1]{\tikz[baseline=(X.base)]\node[fill=pdpMint,draw=pdpTeal,rounded corners=3pt,inner xsep=5pt,inner ysep=2pt](X){\scriptsize\bfseries #1};}
+
+\lstdefinestyle{matlab}{
+  language=Matlab,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{pdpTeal}\bfseries,
+  commentstyle=\color{pdpSlate},
+  stringstyle=\color{pdpAmber!80!black},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{pdpLine},
+  backgroundcolor=\color{white},
+  xleftmargin=1mm,
+  xrightmargin=1mm
+}

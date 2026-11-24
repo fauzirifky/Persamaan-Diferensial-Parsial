@@ -14,7 +14,7 @@ Repositori materi Persamaan Diferensial Parsial, Program Studi Matematika, Insti
 
 Folder: `slides/week-06-pendekatan-numerik-pdp-orde-1/`
 
-Materi membahas transport/adveksi, skema upwind, CFL singkat, kasus polutan sepanjang sungai, serta kepadatan mahasiswa pada koridor gedung. PDF yang sebelumnya tersedia dipertahankan, dan source LaTeX direkonstruksi agar materi dapat diedit kembali.
+Transport/adveksi, skema upwind, CFL singkat, kasus polutan sepanjang sungai, serta kepadatan mahasiswa pada koridor gedung.
 
 ### Pertemuan 9 - Persamaan Gelombang
 
@@ -22,19 +22,28 @@ Folder: `slides/week-09-persamaan-gelombang/`
 
 **Catatan kalender:** Pertemuan 9 dilaksanakan pada Minggu 10 karena satu minggu perkuliahan sebelumnya kosong.
 
-Alur materi:
+Materi meliputi pemodelan dawai bergetar, klasifikasi hiperbolik, transformasi karakteristik dan bentuk kanonik, formula d'Alembert, pemisahan variabel, fungsi eigen, serta linearisasi shallow-water equation.
 
-1. Persamaan Diferensial Parsial dalam pemodelan matematis dan komputasi ilmiah.
-2. Karakteristik pada PDP orde satu dan perluasannya ke PDP orde dua.
-3. Peran solusi analitik dan simulasi numerik pada model nyata.
-4. Klasifikasi berdasarkan linearitas, kehomogenan, dan tipe; principal part dan diskriminan.
-5. Transformasi koordinat, persamaan karakteristik, dan reduksi ke bentuk kanonik.
-6. Derivasi persamaan gelombang satu dimensi dari Hukum II Newton pada dawai.
-7. Klasifikasi, koordinat karakteristik, dan canonical form persamaan gelombang.
-8. Masalah Cauchy pada garis tak berhingga dan formula d'Alembert.
-9. Masalah nilai awal-batas pada dawai berhingga, pemisahan variabel, dan eigenfungsi.
-10. Linearisasi sistem air dangkal satu dimensi dan persamaan gelombang homogen/tak homogen.
-11. Latihan individu tertulis tangan: klasifikasi-kanonik, IBVP dawai, dan forcing.
+### Pertemuan 12 - Metode Beda Hingga untuk PDP Parabolik dan Eliptik
+
+Folder: `slides/week-12-metode-numerik-pdp-orde-2/`
+
+Materi ini sengaja disusun sebagai kelanjutan langsung dari Deret Fourier I--III dan Persamaan Panas--Separasi Variabel. Alurnya:
+
+1. solusi analitik sebagai benchmark numerik;
+2. grid, notasi diskret, dan aproksimasi Taylor;
+3. FTCS dan asal syarat kestabilan;
+4. Backward Euler dan Crank--Nicolson;
+5. konsistensi, stabilitas, konvergensi, serta Teorema Lax--Richtmyer dalam konteksnya;
+6. verification vs validation;
+7. Black--Scholes sebagai PDP parabolik yang direduksi ke heat equation;
+8. pressure diffusion pada reservoir sebagai model difusi lain;
+9. Poisson/Laplace, skema lima titik, manufactured solution, dan grid refinement;
+10. prosedur pemilihan dan verifikasi metode numerik untuk Case 2.
+
+Kode MATLAB terkait berada pada:
+
+`matlab/week-12-metode-numerik-pdp-orde-2/`
 
 ## Struktur
 
@@ -43,10 +52,12 @@ Persamaan-Diferensial-Parsial/
 ├── README.md
 ├── Makefile
 ├── matlab/
-│   └── week-09-wave-visualization.m
+│   ├── week-09-wave-visualization.m
+│   └── week-12-metode-numerik-pdp-orde-2/
 ├── slides/
 │   ├── week-06-pendekatan-numerik-pdp-orde-1/
-│   └── week-09-persamaan-gelombang/
+│   ├── week-09-persamaan-gelombang/
+│   └── week-12-metode-numerik-pdp-orde-2/
 └── template/
     └── pdp-beamer.sty
 ```
@@ -58,6 +69,7 @@ Dengan MacTeX/TeX Live dan `latexmk`:
 ```bash
 make week06
 make week09
+make week12
 ```
 
 atau
@@ -66,6 +78,6 @@ atau
 make pdf
 ```
 
-## Catatan pedagogis
+## Prinsip pedagogis numerik PDP orde dua
 
-Pertemuan berikutnya dapat menggunakan solusi analitik persamaan gelombang sebagai benchmark sebelum metode numerik PDP orde dua diperkenalkan. Dengan demikian, solusi numerik tidak langsung dipercaya hanya karena menghasilkan grafik: mahasiswa terlebih dahulu mempunyai kasus yang dapat diverifikasi secara analitik.
+Metode numerik tidak dinilai benar hanya karena menghasilkan plot yang tampak masuk akal. Jika tersedia, kasus sederhana dengan solusi analitik digunakan sebagai benchmark. Implementasi diperiksa melalui konsistensi, kestabilan, galat terhadap solusi analitik, dan grid/time-step refinement sebelum solver diterapkan kembali pada model yang lebih kompleks.

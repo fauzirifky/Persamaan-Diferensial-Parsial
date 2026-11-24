@@ -3,7 +3,7 @@
 \pdpfooter{Metode Numerik PDP Orde Dua}{}
 
 \title{Metode Beda Hingga untuk PDP Parabolik dan Eliptik}
-\subtitle{Stabilitas, Konvergensi, dan Verifikasi terhadap Solusi Analitik}
+\subtitle{Stabilitas, Konsistensi, Konvergensi, dan Verifikasi Solusi Numerik}
 \author{Tim Pengajar Persamaan Diferensial Parsial}
 \institute{Program Studi Matematika - Institut Teknologi Sumatera}
 \date{Pertemuan 12}
@@ -16,7 +16,7 @@
     \fill[pdpNavy] (current page.south west) rectangle ([xshift=0.33\paperwidth]current page.north west);
     \fill[pdpTeal] ([xshift=0.33\paperwidth]current page.south west) rectangle ([xshift=0.337\paperwidth]current page.north west);
   \end{tikzpicture}
-  \vspace{0.62cm}
+  \vspace{0.58cm}
   \begin{columns}[T]
     \column{0.30\textwidth}
       \color{white}
@@ -26,498 +26,651 @@
     \column{0.64\textwidth}
       {\LARGE\bfseries Metode Beda Hingga untuk PDP Parabolik dan Eliptik}\par
       \pdporangeline
-      {\large Stabilitas, Konvergensi, dan Verifikasi terhadap Solusi Analitik}\par\vspace{0.48cm}
+      {\large Stabilitas, Konsistensi, Konvergensi, dan Verifikasi Solusi Numerik}\par\vspace{0.45cm}
       {\bfseries Koordinator:} Dear Michiko Mutiara Noor, M.Si.\par
-      {\bfseries Tim pengajar:} Dr. Dewi Suhika, M.Sc. dan Rifky Fauzi\par\vspace{0.62cm}
+      {\bfseries Tim pengajar:} Dr. Dewi Suhika, M.Sc. dan Rifky Fauzi\par\vspace{0.58cm}
       Program Studi Matematika\par
       Institut Teknologi Sumatera
   \end{columns}
 \end{frame}
 
 % 2 -----------------------------------------------------------------
-\begin{frame}{Keterkaitan dengan Materi Analitik Sebelumnya}
+\begin{frame}{Materi Hari Ini}
 \small
 \begin{columns}[T,onlytextwidth]
-\column{0.24\textwidth}
-\begin{block}{Deret Fourier I}
-Basis periodik
-\[
-1,\cos nx,\sin nx
-\]
-dan koefisien pada $(-\pi,\pi)$.
+\column{0.23\textwidth}
+\begin{block}{1. Benchmark analitik}
+Mulai dari model yang telah dipahami secara analitik: persamaan panas, deret Fourier, dan fungsi eigen.
 \end{block}
-\column{0.24\textwidth}
-\begin{block}{Deret Fourier II}
-Skala domain menjadi
-\[
-(-L,L)
-\]
-dengan basis $\cos(n\pi x/L)$ dan $\sin(n\pi x/L)$.
+\column{0.23\textwidth}
+\begin{block}{2. Hampiran numerik}
+Bangun grid, aproksimasi turunan dengan beda hingga, lalu susun FTCS, Backward Euler, dan Crank--Nicolson.
 \end{block}
-\column{0.24\textwidth}
-\begin{block}{Deret Fourier III}
-Perluasan genap/ganjil menghasilkan deret kosinus/sinus pada $(0,L)$.
+\column{0.23\textwidth}
+\begin{block}{3. Kepercayaan hasil}
+Periksa konsistensi, stabilitas, konvergensi, error, dan verifikasi terhadap solusi analitik.
 \end{block}
-\column{0.24\textwidth}
-\begin{block}{Persamaan Panas}
-Separasi variabel menghasilkan mode eigen yang sama, dengan amplitudo yang meluruh terhadap waktu.
+\column{0.23\textwidth}
+\begin{block}{4. Transfer ke model lain}
+Terapkan pola yang sama pada Black--Scholes, difusi media berpori, Laplace, dan Poisson.
 \end{block}
 \end{columns}
-\vspace{0.12cm}
-\begin{beamercolorbox}[sep=.12cm,wd=\textwidth]{normal text}
+\vspace{0.15cm}
+\begin{beamercolorbox}[sep=.14cm,wd=\textwidth]{normal text}
 \centering
-Materi numerik hari ini \textbf{tidak mengganti analitik}. Solusi analitik menjadi acuan untuk menilai apakah skema diskret benar dan cukup akurat.
+\textbf{Gagasan utama:} solusi numerik adalah \emph{hampiran}. Sebelum dipakai pada model kompleks, solver perlu diuji pada kasus sederhana yang solusi analitiknya diketahui.
 \end{beamercolorbox}
-\pdpsource{Prasyarat materi: Deret Fourier (I)--(III) dan Persamaan Panas--Separasi Variabel, D. Michiko M. Noor, 2026.}
+\vspace{0.08cm}
+\pdpnote{Ini meneruskan alur sebelumnya: sistem shallow-water nonlinear $\rightarrow$ limit amplitudo kecil $\rightarrow$ persamaan gelombang $\rightarrow$ solusi analitik sebagai benchmark.}
+\pdpsource{Chapra \& Canale, Numerical Methods for Engineers, 8th ed.; materi Fourier dan Persamaan Panas, D. Michiko M. Noor (2026).}
 \end{frame}
 
 % 3 -----------------------------------------------------------------
-\begin{frame}{Persamaan Panas: Masalah Nilai Awal-Batas yang Menjadi Acuan}
-\small
-Mengikuti notasi materi analitik, ambil $k>0$ sebagai difusivitas:
+\begin{frame}{Klasifikasi PDP yang Digunakan pada Pertemuan Ini}
+\footnotesize
+Untuk PDP orde dua dalam variabel $(x,t)$,
 \[
-\boxed{u_t-k u_{xx}=0},\qquad 0<x<L,\ t>0,
+A u_{xx}+2B u_{xt}+C u_{tt}+\text{(turunan orde lebih rendah)}=0,
 \]
+\textbf{principal part} adalah kumpulan turunan orde tertinggi. Definisikan diskriminan
 \[
- u(0,t)=u(L,t)=0,\qquad u(x,0)=\phi(x).
+\boxed{\Delta=B^2-AC}.
 \]
 \begin{columns}[T,onlytextwidth]
-\column{0.48\textwidth}
-\begin{block}{Mengapa hanya satu kondisi awal?}
-Persamaan panas berorde satu terhadap waktu. Setelah $u(x,0)=\phi(x)$ diketahui, nilai awal $u_t(x,0)$ tidak bebas; dari PDP,
+\column{0.31\textwidth}
+\begin{block}{Persamaan panas}
+$u_t-k u_{xx}=0$.
+
+$A=-k$, $B=0$, $C=0$, sehingga
 \[
- u_t(x,0)=k\,\phi''(x)
+\Delta=0.
 \]
-bila $\phi$ cukup halus.
+\centering\textbf{Parabolik}
 \end{block}
-\column{0.48\textwidth}
-\begin{block}{Bandingkan dengan persamaan gelombang}
-Persamaan gelombang berorde dua terhadap waktu, sehingga memerlukan dua data awal independen:
+\column{0.31\textwidth}
+\begin{block}{Persamaan gelombang}
+$u_{tt}-c^2u_{xx}=0$.
+
+$A=-c^2$, $B=0$, $C=1$, sehingga
 \[
- u(x,0),\qquad u_t(x,0).
+\Delta=c^2>0.
 \]
-Perbedaan ini berasal langsung dari orde turunan waktu.
+\centering\textbf{Hiperbolik}
+\end{block}
+\column{0.31\textwidth}
+\begin{block}{Persamaan Laplace}
+$u_{xx}+u_{yy}=0$.
+
+$A=1$, $B=0$, $C=1$, sehingga
+\[
+\Delta=-1<0.
+\]
+\centering\textbf{Eliptik}
 \end{block}
 \end{columns}
+\pdpnote{Suku $u_t$ pada persamaan panas adalah turunan orde pertama, sehingga tidak masuk principal part untuk klasifikasi orde dua.}
 \end{frame}
 
 % 4 -----------------------------------------------------------------
-\begin{frame}{Separasi Variabel dan Basis Eigen untuk Persamaan Panas}
-\footnotesize
-Ambil bentuk terpisah
-\[
- u(x,t)=X(x)T(t).
-\]
-Substitusi ke $u_t-k u_{xx}=0$ memberi
-\[
- X T'-kX''T=0
- \quad\Longrightarrow\quad
- \frac{T'}{kT}=\frac{X''}{X}=-\lambda.
-\]
-Tanda $-\lambda$ dipilih karena syarat batas $X(0)=X(L)=0$ memiliki solusi nontrivial untuk $\lambda>0$:
-\[
- X''+\lambda X=0,\qquad X(0)=X(L)=0.
-\]
-Diperoleh
-\[
- \lambda_n=\left(\frac{n\pi}{L}\right)^2,
- \qquad X_n(x)=\sin\left(\frac{n\pi x}{L}\right),
-\]
-\[
- T_n(t)=\exp\!\left[-k\left(\frac{n\pi}{L}\right)^2t\right].
-\]
-Karena PDP linear, superposisi mode juga solusi:
-\[
-\boxed{u(x,t)=\sum_{n=1}^{\infty} b_n
- e^{-k(n\pi/L)^2t}\sin\left(\frac{n\pi x}{L}\right)}.
-\]
-\end{frame}
-
-% 5 -----------------------------------------------------------------
-\begin{frame}{Koefisien Fourier Menentukan Kondisi Awal}
+\begin{frame}{Persamaan Panas sebagai Masalah Nilai Awal--Batas}
 \small
-Pada $t=0$,
+Ambil $k>0$ sebagai difusivitas:
 \[
- \phi(x)=u(x,0)=\sum_{n=1}^{\infty}b_n\sin\left(\frac{n\pi x}{L}\right).
+\boxed{u_t=k u_{xx}},\qquad 0<x<L,\quad t>0.
 \]
-Ini tepat deret sinus yang muncul dari \textbf{perluasan ganjil} fungsi pada $(0,L)$. Dengan ortogonalitas sinus,
+\vspace{-0.05cm}
 \[
-\boxed{b_n=\frac{2}{L}\int_0^L \phi(x)
-\sin\left(\frac{n\pi x}{L}\right)\,dx}.
+\underbrace{u(x,0)=\phi(x)}_{\text{nilai awal}},\qquad
+\underbrace{u(0,t)=0,\quad u(L,t)=0}_{\text{nilai batas Dirichlet}}.
 \]
 \begin{columns}[T,onlytextwidth]
 \column{0.48\textwidth}
-\begin{block}{Benchmark satu mode}
-Pilih
+\begin{block}{Mengapa satu nilai awal?}
+Persamaan panas berorde satu terhadap waktu. Setelah $u(x,0)=\phi(x)$ diberikan, $u_t(x,0)$ tidak bebas. Jika $\phi$ cukup halus,
 \[
-\phi(x)=\sin\left(\frac{\pi x}{L}\right).
+u_t(x,0)=k\phi''(x).
 \]
-Maka $b_1=1$ dan $b_n=0$ untuk $n\ge2$.
 \end{block}
 \column{0.48\textwidth}
-\begin{block}{Solusi eksak}
+\centering
+\includegraphics[width=\linewidth,height=3.15cm,keepaspectratio]{figures/heat_diffusion_profiles.png}
+\pdpnote{Mode spasial tetap, amplitudonya meluruh terhadap waktu.}
+\end{columns}
+\end{frame}
+
+% 5 -----------------------------------------------------------------
+\begin{frame}{Separasi Variabel: Mengapa Konstanta Pemisahan Ditulis $-\lambda$?}
+\footnotesize
+Ambil $u(x,t)=X(x)T(t)$. Substitusi ke $u_t=k u_{xx}$ memberi
 \[
-\boxed{u(x,t)=e^{-k(\pi/L)^2t}
-\sin\left(\frac{\pi x}{L}\right)}.
+\frac{T'}{kT}=\frac{X''}{X}=\mu,
+\qquad X(0)=X(L)=0.
 \]
-Inilah benchmark utama untuk memeriksa skema numerik.
+\begin{block}{Pertanyaan}
+Nilai $\mu$ seperti apa yang memungkinkan $X$ \textbf{tidak identik nol} dan tetap memenuhi kedua syarat batas?
+\end{block}
+\begin{columns}[T,onlytextwidth]
+\column{0.31\textwidth}
+\begin{block}{$\mu=0$}
+$X''=0\Rightarrow X=A+Bx$.
+
+Dua syarat batas memaksa $A=B=0$.
+\end{block}
+\column{0.31\textwidth}
+\begin{block}{$\mu>0$}
+$X''-\alpha^2X=0$ menghasilkan fungsi eksponensial/hiperbolik.
+
+Coba terapkan $X(0)=X(L)=0$.
+\end{block}
+\column{0.31\textwidth}
+\begin{block}{$\mu<0$}
+Tulis $\mu=-\lambda$, $\lambda>0$:
+\[
+X''+\lambda X=0.
+\]
+Fungsi sinus dapat nol di kedua ujung tanpa identik nol.
+\end{block}
+\end{columns}
+\vspace{0.08cm}
+Karena itu pilihan yang relevan adalah
+\[
+\boxed{\mu=-\lambda},\qquad
+\lambda_n=\left(\frac{n\pi}{L}\right)^2,
+\quad X_n=\sin\left(\frac{n\pi x}{L}\right).
+\]
+\end{frame}
+
+% 6 -----------------------------------------------------------------
+\begin{frame}{Dari Domain Kontinu ke Grid Diskret}
+\footnotesize
+Sebelum mengaproksimasi turunan, tentukan terlebih dahulu titik tempat solusi akan dihitung:
+\[
+x_i=ih,\quad i=0,1,\dots,N,\qquad
+h=\frac{L}{N},
+\]
+\[
+t^n=n\Delta t,\quad n=0,1,\dots,N_t.
+\]
+\begin{columns}[T,onlytextwidth]
+\column{0.53\textwidth}
+\centering
+\begin{tikzpicture}[x=0.74cm,y=0.53cm]
+  \draw[->,pdpSlate] (-0.3,0) -- (7.2,0) node[right] {$x$};
+  \draw[->,pdpSlate] (0,-0.3) -- (0,4.45) node[above] {$t$};
+  \foreach \i in {0,...,7}{\draw[pdpLine] (\i,0)--(\i,4.2);}
+  \foreach \j in {0,...,4}{\draw[pdpLine] (0,\j)--(7,\j);}
+  \foreach \i in {0,...,7}{\foreach \j in {0,...,4}{\fill[pdpTeal] (\i,\j) circle (1.25pt);}}
+  \node[below] at (1,0) {$x_1$};
+  \node[below] at (5,0) {$x_i$};
+  \node[left] at (0,1) {$t^1$};
+  \node[left] at (0,3) {$t^n$};
+  \draw[pdpAmber,very thick] (0,3)--(7,3);
+  \node[pdpNavy,above] at (5.4,3) {$\mathbf U^n$};
+\end{tikzpicture}
+\column{0.43\textwidth}
+\begin{block}{Apa itu $U_i^n$?}
+\[
+\boxed{U_i^n\approx u(x_i,t^n)}.
+\]
+Untuk satu waktu $t^n$, nilai ruang disimpan sebagai vektor
+\[
+\mathbf U^n=[U_0^n,\dots,U_N^n]^T.
+\]
+Jika seluruh waktu disimpan, data dapat dipandang sebagai matriks
+\[
+\mathbf U=(U_i^n).
+\]
+Baris: waktu; kolom: posisi.
 \end{block}
 \end{columns}
 \end{frame}
 
-% 6 -----------------------------------------------------------------
-\begin{frame}{Diskretisasi Ruang dan Waktu}
-\small
-Bagi domain menjadi grid seragam:
-\[
- x_i=i h,\qquad h=\frac{L}{N},\qquad
- t^n=n\,\Delta t,
-\]
-dan tulis
-\[
- U_i^n\approx u(x_i,t^n).
-\]
-Dari ekspansi Taylor terhadap waktu,
-\[
- u(x_i,t^{n+1})=u(x_i,t^n)+\Delta t\,u_t(x_i,t^n)+O(\Delta t^2),
-\]
-sehingga
-\[
- u_t(x_i,t^n)=\frac{U_i^{n+1}-U_i^n}{\Delta t}+O(\Delta t).
-\]
-Dari Taylor terhadap ruang di $x_i$,
-\[
- u(x_i\!\pm\! h,t^n)=u_i^n\pm h u_x+\frac{h^2}{2}u_{xx}\pm\frac{h^3}{6}u_{xxx}+O(h^4),
-\]
-sehingga setelah dijumlahkan,
-\[
- u_{xx}(x_i,t^n)=\frac{U_{i+1}^n-2U_i^n+U_{i-1}^n}{h^2}+O(h^2).
-\]
-\end{frame}
-
 % 7 -----------------------------------------------------------------
-\begin{frame}{Skema FTCS dan Konsistensi}
-\small
-Substitusikan dua aproksimasi sebelumnya ke $u_t=k u_{xx}$:
+\begin{frame}{Beda Hingga dari Deret Taylor}
+\footnotesize
+\textbf{Beda hingga} mengganti turunan dengan kombinasi nilai fungsi pada titik grid. Asalnya dari ekspansi Taylor.
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Turunan pertama}
+Beda maju:
 \[
- \frac{U_i^{n+1}-U_i^n}{\Delta t}
- =k\frac{U_{i+1}^n-2U_i^n+U_{i-1}^n}{h^2}.
+u_t(t^n)\approx\frac{U^{n+1}-U^n}{\Delta t},
+\qquad O(\Delta t).
 \]
-Definisikan bilangan tak berdimensi
+Beda mundur:
 \[
-\boxed{r=\frac{k\Delta t}{h^2}}.
+u_t(t^{n+1})\approx\frac{U^{n+1}-U^n}{\Delta t},
+\qquad O(\Delta t).
 \]
-Maka skema \textbf{Forward Time--Centered Space (FTCS)} adalah
+Beda tengah:
 \[
-\boxed{U_i^{n+1}=U_i^n+r\left(U_{i+1}^n-2U_i^n+U_{i-1}^n\right)}.
+u_t(t^n)\approx\frac{U^{n+1}-U^{n-1}}{2\Delta t},
+\qquad O(\Delta t^2).
 \]
-\begin{block}{Konsistensi}
-Galat pemotongan berasal dari suku Taylor yang dibuang:
-\[
-\tau_i^n=O(\!\Delta t)+O(h^2).
-\]
-Karena $\tau_i^n\to0$ ketika $\Delta t,h\to0$, FTCS konsisten terhadap persamaan panas.
 \end{block}
+\column{0.48\textwidth}
+\begin{block}{Turunan kedua ruang}
+Dari penjumlahan Taylor di $x_i+h$ dan $x_i-h$,
+\[
+\boxed{u_{xx}(x_i,t^n)\approx
+\frac{U_{i+1}^n-2U_i^n+U_{i-1}^n}{h^2}},
+\]
+berorde
+\[
+O(h^2).
+\]
+\end{block}
+\begin{block}{Makna $O(h^p)$}
+$E(h)=O(h^p)$ berarti untuk grid cukup halus, besar error dibatasi oleh konstanta kali $h^p$. Idealnya, $h\mapsto h/2$ membuat error berkurang sekitar $2^p$ kali.
+\end{block}
+\end{columns}
 \end{frame}
 
 % 8 -----------------------------------------------------------------
-\begin{frame}{Stabilitas FTCS melalui Mode Diskret}
-\footnotesize
-Materi Fourier menunjukkan bahwa fungsi dapat diuraikan menjadi mode sinus. Untuk grid Dirichlet, ambil satu mode diskret
+\begin{frame}{Keluarga Metode $\theta$ untuk Persamaan Panas}
+\small
+Tuliskan operator beda ruang
 \[
- U_i^n=A_n\sin\left(\frac{m\pi i}{N}\right),\qquad m=1,2,\dots,N-1.
+(\delta_{xx}U)_i=\frac{U_{i+1}-2U_i+U_{i-1}}{h^2}.
 \]
-Substitusi ke FTCS menghasilkan
+Keluarga metode $\theta$:
 \[
- A_{n+1}=G_m A_n,
+\boxed{
+\frac{U_i^{n+1}-U_i^n}{\Delta t}
+=k\Big[(1-\theta)(\delta_{xx}U^n)_i+\theta(\delta_{xx}U^{n+1})_i\Big].}
 \]
-dengan \textbf{faktor amplifikasi}
-\[
-\boxed{G_m=1-4r\sin^2\left(\frac{m\pi}{2N}\right)}.
-\]
-$G_m$ mengukur perubahan amplitudo satu mode dalam satu langkah waktu. Agar gangguan numerik tidak membesar terus-menerus, diperlukan
-\[
- |G_m|\le1\qquad\text{untuk semua }m.
-\]
-Nilai terburuk terjadi pada mode grid berfrekuensi tinggi, sehingga
-\[
- -1\le 1-4r\le1
- \quad\Longrightarrow\quad
-\boxed{0\le r\le\frac12}.
-\]
-Jadi FTCS stabil hanya jika $k\Delta t/h^2\le1/2$ untuk model 1D ini.
+\begin{center}
+\begin{tabular}{ccll}
+\toprule
+$\theta$ & Nama & Sifat waktu & Konsekuensi komputasi\\
+\midrule
+$0$ & Forward Euler / FTCS & orde 1 & eksplisit; nilai baru dihitung langsung\\
+$1/2$ & Crank--Nicolson & orde 2 & implisit; sistem linear tiap langkah\\
+$1$ & Backward Euler & orde 1 & implisit; sistem linear tiap langkah\\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{beamercolorbox}[sep=.12cm,wd=\textwidth]{normal text}
+\centering
+Istilah \textbf{FTCS} berarti \emph{Forward Time--Centered Space}: beda maju untuk waktu dan beda tengah untuk turunan kedua ruang.
+\end{beamercolorbox}
+\pdpsource{Crank \& Nicolson (1947); Strikwerda, Finite Difference Schemes and Partial Differential Equations.}
 \end{frame}
 
 % 9 -----------------------------------------------------------------
-\begin{frame}{Ketidakstabilan ketika Syarat FTCS Dilanggar}
-\begin{columns}[T,onlytextwidth]
-\column{0.56\textwidth}
-\centering
-\includegraphics[width=\linewidth,height=4.7cm,keepaspectratio]{figures/heat_ftcs_unstable.png}
-\column{0.41\textwidth}
+\begin{frame}{FTCS: Dari Aproksimasi Turunan ke Skema}
 \small
-\begin{block}{Apa yang terjadi?}
-Untuk $r>1/2$, terdapat mode dengan
+Untuk $\theta=0$,
 \[
-|G_m|>1.
+\frac{U_i^{n+1}-U_i^n}{\Delta t}
+=k\frac{U_{i+1}^n-2U_i^n+U_{i-1}^n}{h^2}.
 \]
-Kesalahan pembulatan, diskretisasi, atau gangguan kecil pada mode tersebut diperbesar setiap langkah waktu.
+Definisikan
+\[
+\boxed{r=\frac{k\Delta t}{h^2}},
+\]
+sehingga
+\[
+\boxed{U_i^{n+1}=U_i^n+r(U_{i+1}^n-2U_i^n+U_{i-1}^n)}.
+\]
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Konsistensi}
+Galat pemotongan lokal berasal dari suku Taylor yang dibuang:
+\[
+\tau_i^n=O(\Delta t)+O(h^2).
+\]
+Jadi skema mendekati PDP saat $\Delta t,h\to0$.
 \end{block}
-\begin{block}{Makna jangka panjang}
-Walaupun beberapa langkah awal dapat tampak masuk akal, amplitudo numerik akhirnya tumbuh dan tidak lagi merepresentasikan solusi difusi yang seharusnya meluruh.
+\column{0.48\textwidth}
+\begin{block}{Belum cukup}
+Skema konsisten belum otomatis menghasilkan solusi yang benar pada komputasi jangka panjang. Kita masih harus memeriksa \textbf{stabilitas} dan kemudian \textbf{konvergensi}.
 \end{block}
 \end{columns}
 \end{frame}
 
 % 10 ----------------------------------------------------------------
-\begin{frame}{Backward Euler: Skema Implisit}
+\begin{frame}{Analisis von Neumann: Mengapa Menguji Mode Fourier?}
 \footnotesize
-Gunakan beda mundur untuk turunan waktu pada $t^{n+1}$:
+Untuk skema linear dengan koefisien konstan, setiap gangguan grid dapat diuraikan menjadi kombinasi mode Fourier. Karena superposisi berlaku, cukup periksa bagaimana \textbf{satu mode} berkembang.
 \[
- u_t(x_i,t^{n+1})\approx\frac{U_i^{n+1}-U_i^n}{\Delta t}.
+U_i^n=A_n\sin\left(\frac{m\pi i}{N}\right),
+\qquad m=1,\dots,N-1.
 \]
-Evaluasi operator ruang juga pada $t^{n+1}$:
+Bentuk sinus dipilih karena sesuai dengan boundary Dirichlet dan materi fungsi eigen yang telah dipelajari.
+\begin{block}{Faktor amplifikasi}
+Substitusi ke skema selalu memberi hubungan berbentuk
 \[
- \frac{U_i^{n+1}-U_i^n}{\Delta t}
- =k\frac{U_{i+1}^{n+1}-2U_i^{n+1}+U_{i-1}^{n+1}}{h^2}.
+\boxed{A_{n+1}=G_m A_n}.
 \]
-Dengan $r=k\Delta t/h^2$,
+Maka
 \[
-\boxed{-rU_{i-1}^{n+1}+(1+2r)U_i^{n+1}-rU_{i+1}^{n+1}=U_i^n}.
+A_n=G_m^n A_0.
 \]
-Semua nilai pada waktu baru saling terkopel; karena itu setiap langkah memerlukan penyelesaian sistem linear tridiagonal.
-\begin{block}{Stabilitas mode}
-Untuk mode sinus yang sama,
-\[
-\boxed{G_m=\frac{1}{1+4r\sin^2(m\pi/(2N))}}.
-\]
-Untuk setiap $r>0$, berlaku $0<G_m\le1$. Maka Backward Euler stabil tanpa batasan $r$ untuk persamaan panas linear ini.
+Jadi:
+\begin{itemize}
+  \item $|G_m|<1$: mode meluruh;
+  \item $|G_m|=1$: amplitudo tetap;
+  \item $|G_m|>1$: gangguan membesar berulang kali dan skema tidak stabil.
+\end{itemize}
 \end{block}
+\pdpnote{Pada domain periodik atau garis tak berhingga, analisis von Neumann lazim ditulis dengan mode kompleks $e^{\mathrm i\xi x}$; sinus di sini adalah bentuk real yang lebih dekat dengan materi Fourier sebelumnya.}
 \end{frame}
 
 % 11 ----------------------------------------------------------------
-\begin{frame}{Crank--Nicolson: Rata-rata Waktu Orde Dua}
+\begin{frame}{Stabilitas FTCS untuk Persamaan Panas}
 \footnotesize
-Crank--Nicolson memakai rata-rata operator difusi pada $t^n$ dan $t^{n+1}$:
+Substitusi mode sinus ke FTCS menghasilkan
 \[
-\frac{U_i^{n+1}-U_i^n}{\Delta t}
-=\frac{k}{2h^2}\Big[
-(U_{i+1}^{n+1}-2U_i^{n+1}+U_{i-1}^{n+1})
-+(U_{i+1}^{n}-2U_i^{n}+U_{i-1}^{n})\Big].
+A_{n+1}=G_mA_n,
+\qquad
+\boxed{G_m=1-4r\sin^2\left(\frac{m\pi}{2N}\right)}.
 \]
-Dengan $r=k\Delta t/h^2$, bentuk aljabarnya
+Agar semua mode tetap terkendali diperlukan
 \[
--rU_{i-1}^{n+1}+2(1+r)U_i^{n+1}-rU_{i+1}^{n+1}
-=
- rU_{i-1}^{n}+2(1-r)U_i^{n}+rU_{i+1}^{n}.
+|G_m|\le1.
 \]
-Skema ini memiliki galat pemotongan
+Mode grid berfrekuensi tinggi memberi kasus terburuk, sehingga
 \[
- O(\Delta t^2+h^2).
+-1\le1-4r\le1
+\quad\Longrightarrow\quad
+\boxed{0\le r\le\frac12}.
 \]
-Untuk mode sinus,
-\[
-\boxed{G_m=\frac{1-2r\sin^2(m\pi/(2N))}{1+2r\sin^2(m\pi/(2N))}},
-\qquad |G_m|\le1\ \text{untuk semua }r>0.
-\]
-Namun untuk $r$ sangat besar, mode frekuensi tinggi dapat memiliki $G_m\approx-1$: amplitudo tidak tumbuh, tetapi tanda berganti sehingga dapat muncul osilasi transien.
+\begin{columns}[T,onlytextwidth]
+\column{0.54\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=3.6cm,keepaspectratio]{figures/heat_ftcs_unstable.png}
+\column{0.42\textwidth}
+\begin{block}{Makna praktis}
+Jika $h$ diperkecil tetapi $\Delta t$ tidak ikut disesuaikan, $r=k\Delta t/h^2$ dapat membesar. Grid ruang yang lebih rapat justru dapat membuat FTCS tidak stabil.
+\end{block}
+\end{columns}
 \end{frame}
 
 % 12 ----------------------------------------------------------------
-\begin{frame}{Stabilitas Tidak Identik dengan Akurasi}
-\begin{columns}[T,onlytextwidth]
-\column{0.52\textwidth}
-\centering
-\includegraphics[width=\linewidth,height=3.8cm,keepaspectratio]{figures/heat_benchmark.png}
-\column{0.45\textwidth}
+\begin{frame}[fragile]{Algoritma dan Implementasi FTCS}
 \footnotesize
-\begin{block}{Tiga pertanyaan berbeda}
-\textbf{Konsisten:} apakah persamaan diskret mendekati PDP ketika grid diperhalus?
-
-\vspace{0.08cm}
-\textbf{Stabil:} apakah gangguan kecil tetap terkendali sepanjang komputasi?
-
-\vspace{0.08cm}
-\textbf{Akurat:} pada grid yang dipakai sekarang, seberapa dekat $U$ dengan solusi PDP?
+\begin{columns}[T,onlytextwidth]
+\column{0.42\textwidth}
+\begin{block}{Algoritma}
+\begin{enumerate}
+  \item Tetapkan $L,T,k,N,h,\Delta t$ dan hitung $r$.
+  \item Periksa $r\le1/2$.
+  \item Isi vektor awal $\mathbf U^0$ dari $\phi(x)$.
+  \item Untuk setiap $n$, simpan salinan \texttt{old}.
+  \item Hitung semua titik interior dari nilai pada waktu $n$.
+  \item Terapkan boundary value.
+  \item Ulangi sampai waktu akhir.
+\end{enumerate}
 \end{block}
-\begin{block}{Konsekuensi}
-Backward Euler dapat stabil untuk $\Delta t$ besar, tetapi error waktunya masih dapat besar. Crank--Nicolson berorde waktu lebih tinggi, tetapi data tidak mulus dapat menghasilkan osilasi transien.
-\end{block}
+\column{0.55\textwidth}
+\begin{lstlisting}[style=matlab]
+r = k*dt/h^2;
+u = phi(x);                 % U^0
+for n = 1:Nt
+    old = u;
+    u(2:end-1) = old(2:end-1) ...
+      + r*(old(3:end) ...
+      - 2*old(2:end-1) ...
+      + old(1:end-2));
+    u(1) = 0;  u(end) = 0;
+end
+\end{lstlisting}
+\pdpnote{Loop waktu merepresentasikan $n=0,1,2,\ldots$. Karena eksplisit, seluruh ruas kanan memakai data pada waktu lama.}
 \end{columns}
 \end{frame}
 
 % 13 ----------------------------------------------------------------
-\begin{frame}{Konsistensi, Stabilitas, dan Konvergensi}
-\small
+\begin{frame}{Backward Euler: Nilai $n+1$ Dicari Serempak}
+\footnotesize
+Untuk $\theta=1$,
+\[
+\frac{U_i^{n+1}-U_i^n}{\Delta t}
+=k\frac{U_{i+1}^{n+1}-2U_i^{n+1}+U_{i-1}^{n+1}}{h^2}.
+\]
+Dengan $r=k\Delta t/h^2$,
+\[
+-rU_{i-1}^{n+1}+(1+2r)U_i^{n+1}-rU_{i+1}^{n+1}=U_i^n.
+\]
 \begin{columns}[T,onlytextwidth]
-\column{0.31\textwidth}
-\begin{block}{Konsistensi}
-Jika solusi eksak dimasukkan ke skema, residual diskret atau galat pemotongan memenuhi
+\column{0.48\textwidth}
+\begin{block}{Strategi komputasi}
+Untuk semua titik interior, susun
 \[
-\tau_{h,\Delta t}\to0
+\boxed{A\mathbf U^{n+1}=\mathbf U^n+\mathbf b_{\text{BC}}}.
 \]
-ketika $h,\Delta t\to0$.
+$A$ adalah matriks tridiagonal dengan diagonal $1+2r$ dan sub/super-diagonal $-r$.
 \end{block}
-\column{0.31\textwidth}
-\begin{block}{Stabilitas}
-Gangguan kecil pada data awal, boundary, atau pembulatan tidak diperbesar tanpa kendali oleh skema diskret.
-\end{block}
-\column{0.31\textwidth}
-\begin{block}{Konvergensi}
-Pada waktu tetap $t^n$,
-\[
-\max_i|U_i^n-u(x_i,t^n)|\to0
-\]
-ketika grid diperhalus.
+\column{0.48\textwidth}
+\begin{block}{Algoritma}
+\begin{enumerate}
+  \item Bentuk $A$ satu kali.
+  \item Pada setiap langkah, bangun ruas kanan.
+  \item Masukkan kontribusi boundary.
+  \item Selesaikan sistem linear $A\mathbf U^{n+1}=\mathbf b$.
+\end{enumerate}
+MATLAB: \texttt{uNew = A\textbackslash rhs}.
 \end{block}
 \end{columns}
-\vspace{0.13cm}
-\begin{beamercolorbox}[sep=.12cm,wd=\textwidth]{normal text}
-\small
-\textbf{Teorema ekuivalensi Lax--Richtmyer.} Untuk masalah nilai awal linear yang \emph{well-posed} dan skema beda hingga yang konsisten, stabilitas ekuivalen dengan konvergensi. \emph{Well-posed} berarti solusi ada, unik, dan bergantung kontinu pada data.
-\end{beamercolorbox}
-\pdpsource{Lax, P.D. \& Richtmyer, R.D. (1956), Communications on Pure and Applied Mathematics 9, 267--293.}
+Untuk mode sinus,
+\[
+G_m=\frac{1}{1+4r\sin^2(m\pi/(2N))},\qquad 0<G_m\le1.
+\]
+Jadi untuk persamaan panas linear ini, Backward Euler stabil untuk setiap $r>0$.
 \end{frame}
 
 % 14 ----------------------------------------------------------------
-\begin{frame}{Verifikasi Numerik dan Validasi Model}
-\small
+\begin{frame}{Crank--Nicolson: Rata-rata Dua Level Waktu}
+\footnotesize
+Untuk $\theta=1/2$,
+\[
+\frac{U_i^{n+1}-U_i^n}{\Delta t}
+=\frac{k}{2}\Big[(\delta_{xx}U^{n+1})_i+(\delta_{xx}U^n)_i\Big].
+\]
+Dapat ditulis sebagai
+\[
+\boxed{A\mathbf U^{n+1}=B\mathbf U^n+\mathbf b_{\text{BC}}}.
+\]
 \begin{columns}[T,onlytextwidth]
 \column{0.48\textwidth}
-\begin{block}{Verifikasi}
-Pertanyaan: \textbf{apakah persamaan matematika diselesaikan dengan benar?}
-
-\vspace{0.08cm}
-Gunakan:
-\begin{itemize}
-  \item solusi analitik;
-  \item manufactured solution;
-  \item grid/time-step refinement;
-  \item pemeriksaan orde galat.
-\end{itemize}
+\begin{block}{Matriks}
+Dengan $D$ matriks beda-kedua interior,
+\[
+A=I-\frac{r}{2}D,
+\qquad
+B=I+\frac{r}{2}D.
+\]
+Galat waktu berorde $O(\Delta t^2)$ dan ruang $O(h^2)$.
 \end{block}
 \column{0.48\textwidth}
-\begin{block}{Validasi}
-Pertanyaan: \textbf{apakah model matematika cukup merepresentasikan fenomena yang dituju?}
-
-\vspace{0.08cm}
-Gunakan perbandingan dengan:
-\begin{itemize}
-  \item data eksperimen;
-  \item observasi lapangan;
-  \item data pasar;
-  \item benchmark fisik yang relevan.
-\end{itemize}
+\begin{block}{Algoritma}
+\begin{enumerate}
+  \item Bentuk $A$ dan $B$ satu kali.
+  \item Hitung $\mathbf b=B\mathbf U^n+\mathbf b_{\text{BC}}$.
+  \item Selesaikan $A\mathbf U^{n+1}=\mathbf b$.
+  \item Ulangi.
+\end{enumerate}
 \end{block}
 \end{columns}
-\vspace{0.12cm}
-\centering
-\textbf{Solusi numerik dapat terverifikasi tetapi modelnya belum tentu tervalidasi.}
-\pdpsource{Roache (2002), Journal of Fluids Engineering 124(1), 4--10; terminology aligned with ASME V\&V.}
+Untuk heat equation, $|G_m|\le1$ untuk semua $r>0$, tetapi pada $r$ besar mode frekuensi tinggi dapat memiliki $G_m<0$: stabil tidak selalu berarti bebas osilasi atau cukup akurat.
+\pdpsource{Crank \& Nicolson (1947); Rannacher (1984).}
 \end{frame}
 
 % 15 ----------------------------------------------------------------
-\begin{frame}{Black--Scholes sebagai PDP Parabolik}
+\begin{frame}{Konsistensi, Stabilitas, Konvergensi, dan Akurasi}
 \footnotesize
-Untuk opsi call Eropa, $V(S,t)$ menyatakan nilai kontrak ketika harga aset adalah $S$ pada waktu $t$. Model klasik memenuhi
-\[
-\boxed{V_t+\frac12\sigma^2S^2V_{SS}+rSV_S-rV=0},
-\]
-dengan kondisi terminal
-\[
-V(S,T)=\max(S-K,0).
-\]
 \begin{columns}[T,onlytextwidth]
-\column{0.47\textwidth}
-\begin{block}{Makna simbol}
-$K$: strike price; $T$: maturity; $r$: suku bunga bebas risiko; $\sigma$: volatilitas; $V_{SS}$: kelengkungan nilai opsi terhadap harga aset.
+\column{0.23\textwidth}
+\begin{block}{Konsistensi}
+Jika solusi eksak dimasukkan ke skema, residual diskret
+\[
+\tau_{h,\Delta t}\to0
+\]
+saat grid diperhalus.
 \end{block}
-\column{0.49\textwidth}
-\begin{block}{Struktur PDP}
-\begin{itemize}
-  \item $V_t$: perubahan terhadap waktu;
-  \item $\tfrac12\sigma^2S^2V_{SS}$: suku difusi;
-  \item $rSV_S$: suku transport/drift dalam koordinat harga;
-  \item $-rV$: suku reaksi/discounting.
-\end{itemize}
+\column{0.23\textwidth}
+\begin{block}{Stabilitas}
+Gangguan kecil tidak diperbesar tanpa kendali selama iterasi waktu/penyelesaian sistem.
+\end{block}
+\column{0.23\textwidth}
+\begin{block}{Konvergensi}
+\[
+\|U-u\|\to0
+\]
+ketika $h,\Delta t\to0$.
+\end{block}
+\column{0.23\textwidth}
+\begin{block}{Akurasi}
+Pada grid yang sedang dipakai, ukur besar error aktual terhadap benchmark.
 \end{block}
 \end{columns}
-\pdpsource{Black, F. \& Scholes, M. (1973), Journal of Political Economy 81(3), 637--654.}
+\vspace{0.12cm}
+\begin{beamercolorbox}[sep=.13cm,wd=\textwidth]{normal text}
+\small
+\textbf{Teorema ekuivalensi Lax--Richtmyer:} untuk masalah nilai awal linear yang \emph{well-posed} dan skema beda hingga yang konsisten, stabilitas ekuivalen dengan konvergensi. \emph{Well-posed}: solusi ada, unik, dan bergantung kontinu pada data.
+\end{beamercolorbox}
+\vspace{0.08cm}
+\pdpnote{Karena itu ``unconditionally stable'' bukan sinonim ``akurat untuk sembarang $\Delta t$''. Stabilitas menjawab pertanyaan berbeda dari besar error pada grid tertentu.}
+\pdpsource{Lax \& Richtmyer (1956); Trefethen, Finite Difference and Spectral Methods for ODEs and PDEs.}
 \end{frame}
 
 % 16 ----------------------------------------------------------------
-\begin{frame}{Transformasi Black--Scholes ke Persamaan Panas: Tahap I}
+\begin{frame}{Benchmark Analitik Setelah Skema Numerik Dibangun}
 \footnotesize
-Perkenalkan waktu menuju jatuh tempo dan koordinat log-harga:
+Sekarang pilih kondisi awal yang membuat solusi analitik sangat jelas:
 \[
-\tau=\frac{\sigma^2}{2}(T-t),\qquad
-x=\ln\left(\frac{S}{K}\right),\qquad
-V(S,t)=K\,v(x,\tau).
+\phi(x)=\sin\left(\frac{\pi x}{L}\right).
 \]
-Karena
+Dari materi Fourier/separasi variabel,
 \[
-\frac{\partial x}{\partial S}=\frac1S,
-\qquad
-\frac{\partial \tau}{\partial t}=-\frac{\sigma^2}{2},
+\boxed{u(x,t)=e^{-k(\pi/L)^2t}\sin\left(\frac{\pi x}{L}\right)}.
 \]
-maka aturan rantai memberi
+\begin{columns}[T,onlytextwidth]
+\column{0.52\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=3.15cm,keepaspectratio]{figures/heat_benchmark.png}
+\column{0.44\textwidth}
+\begin{block}{Apa yang dibandingkan?}
+Pada waktu yang sama $T$:
 \[
-V_t=-K\frac{\sigma^2}{2}v_\tau,
-\qquad
-SV_S=K v_x,
-\qquad
-S^2V_{SS}=K(v_{xx}-v_x).
+E_\infty=\max_i|U_i-u(x_i,T)|.
 \]
-Substitusi ke persamaan Black--Scholes dan pembagian dengan $K\sigma^2/2$ menghasilkan
-\[
-\boxed{v_\tau=v_{xx}+(\kappa-1)v_x-\kappa v},
-\qquad
-\boxed{\kappa=\frac{2r}{\sigma^2}}.
-\]
-Sekarang koefisien suku turunan kedua sudah konstan.
+Lakukan untuk beberapa $h$ dan $\Delta t$.
+\end{block}
+\begin{block}{Mengapa analitik penting?}
+Grafik numerik yang halus belum membuktikan solver benar. Solusi analitik memberi nilai acuan dan perilaku yang seharusnya.
+\end{block}
+\end{columns}
 \end{frame}
 
 % 17 ----------------------------------------------------------------
-\begin{frame}{Transformasi Black--Scholes ke Persamaan Panas: Tahap II}
+\begin{frame}{Verifikasi: Apakah Persamaan Matematika Diselesaikan dengan Benar?}
 \footnotesize
-Hilangkan suku $v_x$ dan $v$ dengan substitusi eksponensial
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Empat alat verifikasi}
+\begin{enumerate}
+  \item \textbf{Solusi analitik:} bandingkan langsung $U$ dengan $u$.
+  \item \textbf{Manufactured solution:} pilih fungsi halus $u^*(x,t)$, lalu hitung sumber/boundary agar $u^*$ menjadi solusi tepat dari PDE buatan.
+  \item \textbf{Grid/time-step refinement:} ulangi dengan $h$ dan/atau $\Delta t$ lebih kecil.
+  \item \textbf{Orde galat teramati:} cek apakah laju penurunan error sesuai orde formal skema.
+\end{enumerate}
+\end{block}
+\column{0.48\textwidth}
+\begin{block}{Bukan validasi}
+\textbf{Verifikasi} menilai solusi persamaan matematika.
+
+\vspace{0.10cm}
+\textbf{Validasi} menilai apakah model matematikanya cukup merepresentasikan fenomena nyata dengan membandingkan terhadap data eksperimen/observasi.
+\end{block}
+\begin{block}{Orde teramati}
+Jika $E_h\approx Ch^p$,
 \[
-v(x,\tau)=e^{a x+b\tau}u(x,\tau).
+\boxed{p\approx\frac{\log(E_h/E_{h/2})}{\log 2}}.
 \]
-Turunannya adalah
-\[
-v_x=e^{ax+b\tau}(u_x+a u),
-\]
-\[
-v_{xx}=e^{ax+b\tau}(u_{xx}+2a u_x+a^2u),
-\]
-\[
-v_\tau=e^{ax+b\tau}(u_\tau+b u).
-\]
-Setelah disubstitusikan ke
-$v_\tau=v_{xx}+(\kappa-1)v_x-\kappa v$, koefisien $u_x$ hilang jika
-\[
-2a+\kappa-1=0
-\quad\Longrightarrow\quad
- a=\frac{1-\kappa}{2}.
-\]
-Koefisien $u$ hilang jika
-\[
-b=a^2+(\kappa-1)a-\kappa=-\frac{(\kappa+1)^2}{4}.
-\]
-Dengan pilihan ini diperoleh
-\[
-\boxed{u_\tau=u_{xx}}.
-\]
-Jadi model finansial yang tampak lebih kompleks direduksi ke persamaan panas yang sudah dipahami secara analitik dan numerik.
+\end{block}
+\end{columns}
+\pdpsource{Roache (2002), Journal of Fluids Engineering 124(1), 4--10; ASME V\&V 20-2009.}
 \end{frame}
 
 % 18 ----------------------------------------------------------------
-\begin{frame}{Black--Scholes: Benchmark Analitik dan Crank--Nicolson}
+\begin{frame}{Black--Scholes: Mengapa Masalah Keuangan Menghasilkan PDP?}
 \begin{columns}[T,onlytextwidth]
-\column{0.50\textwidth}
+\column{0.48\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=4.5cm,keepaspectratio]{figures/black_scholes_payoff_context.png}
+\column{0.49\textwidth}
+\footnotesize
+\begin{block}{Call Eropa}
+Memberi hak, bukan kewajiban, membeli aset pada harga strike $K$ \textbf{hanya pada jatuh tempo} $T$.
+\[
+V(S,T)=\max(S-K,0).
+\]
+\end{block}
+\begin{block}{Mengapa PDP?}
+Nilai opsi $V$ berubah terhadap dua variabel: harga aset $S$ dan waktu $t$. Model volatilitas membuat perubahan harga bersifat difusif; derivasi formal menggunakan It\^o lemma (aturan rantai stokastik) dan portofolio lindung nilai tanpa arbitrase.
+\end{block}
+Hasilnya
+\[
+\boxed{V_t+\tfrac12\sigma^2S^2V_{SS}+rSV_S-rV=0}.
+\]
+\end{columns}
+\pdpsource{Black \& Scholes (1973), Journal of Political Economy 81(3), 637--654.}
+\end{frame}
+
+% 19 ----------------------------------------------------------------
+\begin{frame}{Transformasi Black--Scholes ke Persamaan Panas}
 \scriptsize
-Untuk call Eropa, solusi analitik klasik adalah
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Tahap I: koordinat baru}
+Definisikan
+\[
+\tau=\frac{\sigma^2}{2}(T-t),\quad
+x=\ln(S/K),\quad V=Kv.
+\]
+Aturan rantai memberi
+\[
+V_t=-K\frac{\sigma^2}{2}v_\tau,
+\]
+\[
+SV_S=Kv_x,
+\qquad S^2V_{SS}=K(v_{xx}-v_x).
+\]
+Dengan $\kappa=2r/\sigma^2$,
+\[
+\boxed{v_\tau=v_{xx}+(\kappa-1)v_x-\kappa v}.
+\]
+\end{block}
+\column{0.48\textwidth}
+\begin{block}{Tahap II: hilangkan drift dan reaksi}
+Ambil
+\[
+v=e^{ax+b\tau}u.
+\]
+Pilih
+\[
+a=\frac{1-\kappa}{2},
+\qquad
+b=-\frac{(\kappa+1)^2}{4},
+\]
+sehingga koefisien $u_x$ dan $u$ lenyap. Tersisa
+\[
+\boxed{u_\tau=u_{xx}}.
+\]
+\end{block}
+\begin{beamercolorbox}[sep=.10cm,wd=\linewidth]{normal text}
+Model finansial yang tampak berbeda akhirnya mempunyai inti matematis yang sama dengan persamaan panas.
+\end{beamercolorbox}
+\end{columns}
+\end{frame}
+
+% 20 ----------------------------------------------------------------
+\begin{frame}{Call Eropa: Solusi Analitik sebagai Benchmark Crank--Nicolson}
+\begin{columns}[T,onlytextwidth]
+\column{0.49\textwidth}
+\scriptsize
+Untuk waktu sekarang $t=0$, formula Black--Scholes adalah
 \[
 C(S,0)=S\Phi(d_1)-Ke^{-rT}\Phi(d_2),
 \]
@@ -525,266 +678,448 @@ C(S,0)=S\Phi(d_1)-Ke^{-rT}\Phi(d_2),
 d_1=\frac{\ln(S/K)+(r+\sigma^2/2)T}{\sigma\sqrt{T}},
 \qquad d_2=d_1-\sigma\sqrt{T}.
 \]
-$\Phi(z)$ adalah fungsi distribusi kumulatif normal standar:
-\[
-\Phi(z)=\frac1{\sqrt{2\pi}}\int_{-\infty}^{z}e^{-y^2/2}\,dy.
-\]
-Benchmark digunakan pada
+$\Phi$ adalah CDF normal standar.
+
+\vspace{0.10cm}
+Contoh:
 \[
 K=100,\quad r=0.05,\quad\sigma=0.2,\quad T=1.
 \]
-Solusi Crank--Nicolson dibandingkan langsung dengan formula analitik.
-\column{0.48\textwidth}
+Numerik Crank--Nicolson pada PDE dibandingkan titik demi titik terhadap formula ini.
+\column{0.49\textwidth}
 \centering
 \includegraphics[width=\linewidth,height=4.7cm,keepaspectratio]{figures/black_scholes_compare.png}
 \end{columns}
-\end{frame}
-
-% 19 ----------------------------------------------------------------
-\begin{frame}{Galat Black--Scholes dan Peran Regularitas Data}
-\begin{columns}[T,onlytextwidth]
-\column{0.52\textwidth}
-\centering
-\includegraphics[width=\linewidth,height=3.8cm,keepaspectratio]{figures/black_scholes_error.png}
-\column{0.45\textwidth}
-\footnotesize
-\begin{block}{Mengapa error besar dekat $S=K$?}
-Payoff $\max(S-K,0)$ kontinu tetapi tidak terdiferensialkan di $S=K$. Data awal dalam variabel waktu-mundur tidak mulus di titik itu.
-\end{block}
-\begin{block}{Pelajaran numerik}
-Skema yang stabil tetap perlu diperiksa terhadap solusi analitik, terutama dekat titik yang tidak mulus. Grid refinement dan start-up damping dapat diperlukan agar perilaku praktis sesuai orde teoritis.
-\end{block}
-\end{columns}
-\pdpsource{Rannacher (1984), Numerische Mathematik 43, 309--327; Wade et al. (2007), J. Comput. Appl. Math. 204, 144--158.}
-\end{frame}
-
-% 20 ----------------------------------------------------------------
-\begin{frame}{Difusi Tekanan pada Media Berpori: dari Konservasi ke Diffusion Equation}
-\footnotesize
-Ambil $p(\mathbf x,t)$ sebagai tekanan fluida. Untuk aliran Darcy, fluks volumetrik
-\[
-\boxed{\mathbf q=-\frac{\mathcal K}{\mu}\nabla p},
-\]
-dengan $\mathcal K$ permeabilitas dan $\mu$ viskositas. Untuk fluida/batuan sedikit kompresibel, neraca massa linear dapat ditulis
-\[
-\boxed{\phi c_t\,p_t+\nabla\cdot\mathbf q=s},
-\]
-dengan $\phi$ porositas, $c_t$ kompresibilitas total, dan $s$ sumber volumetrik.
-Substitusi hukum Darcy memberi
-\[
-\phi c_t p_t=\nabla\cdot\left(\frac{\mathcal K}{\mu}\nabla p\right)+s.
-\]
-Jika $\mathcal K,\mu,\phi,c_t$ konstan, aliran 1D, dan $s=0$:
-\[
-\boxed{p_t=D p_{xx}},\qquad
-\boxed{D=\frac{\mathcal K}{\phi\mu c_t}}.
-\]
-Model reservoir yang lebih kompleks dengan heterogenitas, geometri radial, atau sifat bergantung tekanan kembali pada bentuk umum sebelum penyederhanaan ini.
+\pdpnote{Payoff memiliki sudut di $S=K$, sehingga regularitas data awal waktu-mundur lebih rendah di sekitar strike; error lokal biasanya lebih terlihat di sekitar wilayah tersebut.}
 \end{frame}
 
 % 21 ----------------------------------------------------------------
-\begin{frame}{Benchmark Analitik Difusi pada Domain Semi-Takhingga}
+\begin{frame}{Satu Struktur Difusi, Banyak Fenomena}
 \small
-Normalisasi perubahan tekanan menjadi $u(x,t)$ dan ambil
+Bentuk dasar
 \[
- u_t=D u_{xx},\qquad x>0,\ t>0,
+\boxed{u_t=D u_{xx}}
 \]
+berulang setelah asumsi yang sesuai diterapkan pada banyak model.
+\begin{columns}[T,onlytextwidth]
+\column{0.31\textwidth}
+\begin{block}{Konduksi panas}
+$u=T$ adalah temperatur, $D=\alpha$ difusivitas termal.
+\end{block}
+\column{0.31\textwidth}
+\begin{block}{Keuangan}
+Setelah transformasi variabel, Black--Scholes menjadi heat equation pada koordinat log-harga dan waktu-mundur.
+\end{block}
+\column{0.31\textwidth}
+\begin{block}{Media berpori}
+Tekanan atau hydraulic head dapat menyebar secara difusif setelah hukum Darcy digabung dengan penyimpanan massa.
+\end{block}
+\end{columns}
+\vspace{0.14cm}
+\begin{beamercolorbox}[sep=.12cm,wd=\textwidth]{normal text}
+\centering
+Karena itu mempelajari satu benchmark persamaan panas dengan solusi analitik memberi \textbf{alat verifikasi} yang dapat ditransfer ke solver berbagai aplikasi.
+\end{beamercolorbox}
+\end{frame}
+
+% 22 ----------------------------------------------------------------
+\begin{frame}{Hukum Darcy dan Makna Fluks Volumetrik}
+\footnotesize
+Untuk aliran jenuh dalam media berpori,
 \[
- u(x,0)=0,\qquad u(0,t)=1,\qquad u(x,t)\to0\ \text{ketika }x\to\infty.
+\boxed{\mathbf q=-K_h\nabla H},
 \]
-Solusi similarity adalah
+dengan $H$ hydraulic head dan $K_h$ konduktivitas hidraulik.
+\begin{columns}[T,onlytextwidth]
+\column{0.46\textwidth}
+\begin{block}{Apa arti $\mathbf q$?}
+$\mathbf q$ adalah \textbf{Darcy flux / specific discharge}: debit volumetrik per luas penampang, satuannya m/s.
 \[
-\boxed{u(x,t)=\operatorname{erfc}\!\left(\frac{x}{2\sqrt{Dt}}\right)},
+Q_v=A\,q.
 \]
-dengan
+Jadi $q=10^{-5}$ m/s pada luas $A=100$ m$^2$ setara debit total $Q_v=10^{-3}$ m$^3$/s.
+\end{block}
+\column{0.50\textwidth}
+\begin{tikzpicture}[x=0.62cm,y=0.55cm]
+  \fill[pdpSoftAmber] (0,0) rectangle (7,4);
+  \draw[pdpSlate,thick] (0,3.25) .. controls (1.5,3.0) and (2.2,3.15) .. (3.5,2.7) .. controls (5.2,2.25) and (5.7,2.5) .. (7,1.95);
+  \node[pdpSlate] at (1.0,3.55) {permukaan gambut};
+  \draw[pdpTeal,very thick] (0,2.4) .. controls (1.7,2.3) and (2.8,2.4) .. (4.1,1.9) .. controls (5.2,1.5) and (6.1,1.7) .. (7,1.3);
+  \node[pdpTeal] at (1.2,2.65) {muka air};
+  \fill[pdpBg] (6.1,0) rectangle (7,2.0);
+  \draw[pdpSlate,thick] (6.1,0)--(6.1,2.0);
+  \node[rotate=90,pdpSlate] at (6.55,0.9) {kanal/drainase};
+  \draw[->,pdpNavy,thick] (4.5,1.75)--(5.8,1.35) node[midway,above] {$q$};
+  \node[pdpNavy,align=center] at (3.0,0.7) {lapisan gambut\\berpori};
+\end{tikzpicture}
+\end{columns}
+\vspace{0.08cm}
+\pdpnote{Konteks Sumatra: dinamika muka air gambut dipengaruhi hujan, drainase/kanal, konduktivitas hidraulik, dan heterogenitas. Diagram ini hanya model konseptual jenuh yang disederhanakan.}
+\pdpsource{Water-table studies on Padang Island, Sumatra: Hydrology Research 52(6), 1372--1388 (2021); Taufik et al., Data in Brief 41, 107903 (2022).}
+\end{frame}
+
+% 23 ----------------------------------------------------------------
+\begin{frame}{Dari Model Media Berpori ke Persamaan Difusi Sederhana}
+\footnotesize
+Salah satu bentuk penyimpanan massa linear untuk hydraulic head adalah
 \[
-\operatorname{erfc}(z)=\frac{2}{\sqrt\pi}\int_z^\infty e^{-\xi^2}\,d\xi.
+S_s H_t=\nabla\cdot(K_h\nabla H)+R,
 \]
+dengan $S_s$ koefisien penyimpanan dan $R$ sumber/imbuhan.
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+\begin{block}{Model lebih realistis}
+Pada gambut nyata, $K_h$ dapat berubah terhadap posisi/kedalaman, aliran dapat tak jenuh, dan hujan--evapotranspirasi--kanal menjadi sumber/boundary yang berubah waktu.
+\end{block}
+\column{0.49\textwidth}
+\begin{block}{Benchmark sederhana}
+Jika $K_h$ dan $S_s$ konstan, satu dimensi, dan $R=0$,
+\[
+\boxed{H_t=D H_{xx}},
+\qquad
+D=\frac{K_h}{S_s}.
+\]
+Kembali ke persamaan panas/difusi.
+\end{block}
+\end{columns}
+Untuk domain semi-takhingga dengan perubahan boundary mendadak,
+\[
+H(x,0)=0,\quad H(0,t)=1,\quad H(\infty,t)=0,
+\]
+benchmark similarity adalah
+\[
+\boxed{H(x,t)=\operatorname{erfc}\left(\frac{x}{2\sqrt{Dt}}\right)}.
+\]
+\end{frame}
+
+% 24 ----------------------------------------------------------------
+\begin{frame}{Benchmark Difusi Media Berpori}
 \begin{columns}[T,onlytextwidth]
 \column{0.58\textwidth}
 \centering
-\includegraphics[width=\linewidth,height=2.9cm,keepaspectratio]{figures/reservoir_diffusion.png}
+\includegraphics[width=\linewidth,height=4.5cm,keepaspectratio]{figures/reservoir_diffusion.png}
 \column{0.38\textwidth}
-\begin{block}{Verifikasi}
-Pada komputer domain harus dipotong menjadi $0\le x\le L$. Karena itu error dapat berasal dari grid \emph{dan} dari pemilihan $L$ yang terlalu pendek.
+\small
+\begin{block}{Apa yang diuji?}
+Crank--Nicolson harus mendekati kurva $\operatorname{erfc}$ ketika domain numerik cukup panjang dan grid cukup halus.
+\end{block}
+\begin{block}{Sumber error}
+\begin{itemize}
+  \item diskretisasi ruang;
+  \item diskretisasi waktu;
+  \item pemotongan domain semi-takhingga menjadi $0\le x\le L$.
+\end{itemize}
 \end{block}
 \end{columns}
 \end{frame}
 
-% 22 ----------------------------------------------------------------
-\begin{frame}{Dari Persamaan Panas ke Masalah Eliptik Tunak}
+% 25 ----------------------------------------------------------------
+\begin{frame}{Dari Difusi Transien ke Laplace dan Poisson}
 \small
-Model konduksi panas dengan sumber volumetrik $Q$ adalah
+Mulai dari neraca energi dengan sumber panas volumetrik:
 \[
-\boxed{\rho c_p T_t=\nabla\cdot(k_T\nabla T)+Q},
+\boxed{\rho c_p T_t=\nabla\cdot(k_T\nabla T)+Q}.
 \]
-dengan $\rho$ rapat massa, $c_p$ kalor jenis, dan $k_T$ konduktivitas termal.
-Pada keadaan tunak,
-\[
-T_t=0,
-\]
-sehingga
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Jika waktu masih berperan}
+$T_t\neq0$: temperatur berevolusi menuju keadaan baru. Ini masalah \textbf{parabolik}.
+\end{block}
+\column{0.48\textwidth}
+\begin{block}{Jika sudah steady state}
+$T_t=0$:
 \[
 -\nabla\cdot(k_T\nabla T)=Q.
 \]
 Jika $k_T$ konstan,
 \[
-\boxed{-\Delta T=f},\qquad
-\boxed{f=\frac{Q}{k_T}},
+\boxed{-\Delta T=f},\qquad f=Q/k_T.
 \]
-dengan operator Laplace dua dimensi
-\[
-\boxed{\Delta T=T_{xx}+T_{yy}}.
-\]
-Jadi persamaan Poisson muncul sebagai limit keadaan tunak dari model difusi/konduksi dengan sumber.
+Jika $Q=0$, diperoleh \textbf{Laplace}: $\Delta T=0$.
+\end{block}
+\end{columns}
+\vspace{0.10cm}
+\begin{beamercolorbox}[sep=.12cm,wd=\textwidth]{normal text}
+\centering
+Jadi Laplace/Poisson bukan topik yang tiba-tiba berbeda: ia muncul sebagai \textbf{keadaan tunak} dari masalah difusi/konduksi.
+\end{beamercolorbox}
 \end{frame}
 
-% 23 ----------------------------------------------------------------
-\begin{frame}{Benchmark Analitik untuk Masalah Laplace pada Persegi Panjang}
+% 26 ----------------------------------------------------------------
+\begin{frame}{Laplace sebagai PDP Eliptik dan Benchmark Analitik}
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
 \footnotesize
-Sebelum Poisson dengan sumber umum, pertimbangkan Laplace
+Untuk
 \[
- u_{xx}+u_{yy}=0,\qquad 0<x<L,\ 0<y<H,
+u_{xx}+u_{yy}=0,
 \]
-dengan
+principal part memiliki $A=1$, $B=0$, $C=1$ sehingga
 \[
- u(0,y)=u(L,y)=u(x,0)=0,
-\qquad
- u(x,H)=\sin\left(\frac{\pi x}{L}\right).
+\Delta=B^2-AC=-1<0.
 \]
-Ambil $u=X(x)Y(y)$. Separasi memberi
+Maka persamaan Laplace adalah \textbf{eliptik}.
+
+Pada persegi panjang $0<x<L$, $0<y<H$ dengan
 \[
-\frac{X''}{X}=-\frac{Y''}{Y}=-\lambda.
+u(0,y)=u(L,y)=u(x,0)=0,
 \]
-Syarat $X(0)=X(L)=0$ memilih mode pertama
 \[
-X(x)=\sin\left(\frac{\pi x}{L}\right),
+u(x,H)=\sin(\pi x/L),
 \]
-sedangkan
-\[
-Y''-\left(\frac{\pi}{L}\right)^2Y=0,
-\qquad Y(0)=0.
-\]
-Setelah memenuhi $u(x,H)$,
+separasi variabel memberi
 \[
 \boxed{u(x,y)=\sin\left(\frac{\pi x}{L}\right)
 \frac{\sinh(\pi y/L)}{\sinh(\pi H/L)}}.
 \]
-Ini contoh lain bahwa basis Fourier/eigen yang telah dipelajari menyediakan benchmark eksak untuk solver eliptik.
+\column{0.50\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=4.8cm,keepaspectratio]{figures/laplace_exact_contour.png}
+\end{columns}
 \end{frame}
 
-% 24 ----------------------------------------------------------------
-\begin{frame}{Skema Lima Titik untuk Persamaan Poisson}
+% 27 ----------------------------------------------------------------
+\begin{frame}{Skema Lima Titik untuk Poisson}
 \footnotesize
-Untuk grid seragam $x_i=ih$, $y_j=jh$, gunakan aproksimasi turunan kedua yang sama seperti pada persamaan panas:
+Untuk $-\Delta u=f$ pada grid seragam $x_i=ih$, $y_j=jh$,
 \[
-u_{xx}(x_i,y_j)=\frac{U_{i+1,j}-2U_{i,j}+U_{i-1,j}}{h^2}+O(h^2),
+u_{xx}\approx\frac{U_{i+1,j}-2U_{i,j}+U_{i-1,j}}{h^2},
 \]
 \[
-u_{yy}(x_i,y_j)=\frac{U_{i,j+1}-2U_{i,j}+U_{i,j-1}}{h^2}+O(h^2).
+u_{yy}\approx\frac{U_{i,j+1}-2U_{i,j}+U_{i,j-1}}{h^2}.
 \]
-Untuk $-\Delta u=f$ diperoleh
+Maka
 \[
-\boxed{
-\frac{4U_{i,j}-U_{i+1,j}-U_{i-1,j}-U_{i,j+1}-U_{i,j-1}}{h^2}=f_{i,j}}
+\boxed{\frac{4U_{i,j}-U_{i+1,j}-U_{i-1,j}-U_{i,j+1}-U_{i,j-1}}{h^2}=f_{i,j}}.
 \]
-dengan galat pemotongan $O(h^2)$ untuk solusi yang cukup halus.
-\begin{block}{Perbedaan dengan persamaan panas}
-Tidak ada langkah waktu. Semua nilai interior harus dicari secara serempak dari sistem linear sparse
+\begin{columns}[T,onlytextwidth]
+\column{0.47\textwidth}
+\begin{block}{Perbedaan penting}
+Tidak ada indeks waktu $n$. Semua nilai interior dicari serempak dari sistem linear sparse
 \[
 \boxed{A\mathbf U=\mathbf b}.
 \]
 \end{block}
+\column{0.49\textwidth}
+\begin{block}{Algoritma}
+\begin{enumerate}
+  \item Bentuk grid dan indeks titik interior.
+  \item Isi matriks $A$ dari stencil lima titik.
+  \item Masukkan $f$ dan kontribusi nilai batas ke $\mathbf b$.
+  \item Selesaikan $A\mathbf U=\mathbf b$.
+  \item Susun kembali vektor ke grid 2D dan visualisasikan.
+\end{enumerate}
+\end{block}
+\end{columns}
 \end{frame}
 
-% 25 ----------------------------------------------------------------
+% 28 ----------------------------------------------------------------
 \begin{frame}{Manufactured Solution dan Uji Konvergensi Poisson}
 \begin{columns}[T,onlytextwidth]
 \column{0.49\textwidth}
 \footnotesize
-Pilih solusi yang sengaja diketahui
+Pilih fungsi eksak buatan
 \[
- u(x,y)=\sin(\pi x)\sin(\pi y),
+ u^*(x,y)=\sin(\pi x)\sin(\pi y).
 \]
-yang memenuhi $u=0$ pada batas persegi satuan. Karena
+Hitung ruas kanan agar $u^*$ menjadi solusi tepat:
 \[
--\Delta u=2\pi^2\sin(\pi x)\sin(\pi y),
+-\Delta u^*=2\pi^2\sin(\pi x)\sin(\pi y)=f(x,y).
 \]
-maka ambil
+Setelah solver dijalankan,
 \[
- f(x,y)=2\pi^2\sin(\pi x)\sin(\pi y).
+E_h=\max_{i,j}|U_{i,j}-u^*(x_i,y_j)|.
 \]
-Setelah solver dijalankan, ukur galat maksimum
+Untuk skema lima titik,
 \[
-E_h=\max_{i,j}|U_{i,j}-u(x_i,y_j)|.
+E_h\approx Ch^2,
 \]
-Untuk skema orde dua, $E_h\approx Ch^2$, sehingga orde teramati
+sehingga
 \[
-\boxed{p\approx\frac{\log(E_h/E_{h/2})}{\log 2}}\to 2
+\boxed{p\approx\frac{\log(E_h/E_{h/2})}{\log2}}\to2.
 \]
-ketika grid cukup halus.
 \column{0.49\textwidth}
 \centering
-\includegraphics[width=\linewidth,height=2.9cm,keepaspectratio]{figures/poisson_compare.png}
-\vspace{0.08cm}
-\includegraphics[width=\linewidth,height=1.9cm,keepaspectratio]{figures/poisson_convergence.png}
+\includegraphics[width=\linewidth,height=2.8cm,keepaspectratio]{figures/poisson_compare.png}
+\vspace{0.06cm}
+\includegraphics[width=\linewidth,height=1.85cm,keepaspectratio]{figures/poisson_convergence.png}
 \end{columns}
+\pdpsource{Roache (2002), Method of Manufactured Solutions.}
 \end{frame}
 
-% 26 ----------------------------------------------------------------
-\begin{frame}{Prosedur Pemilihan dan Verifikasi Metode Numerik PDP}
+% 29 ----------------------------------------------------------------
+\begin{frame}{Ringkasan Pemilihan Metode}
+\scriptsize
+\begin{center}
+\begin{tabular}{p{2.4cm}p{2.35cm}p{2.35cm}p{2.3cm}p{2.8cm}}
+\toprule
+Metode & Orde formal & Stabilitas heat 1D & Tiap langkah & Catatan\\
+\midrule
+FTCS & $O(\Delta t+h^2)$ & bersyarat: $r\le1/2$ & update langsung & sederhana; cocok untuk demonstrasi kestabilan\\
+Backward Euler & $O(\Delta t+h^2)$ & stabil untuk semua $r>0$ & solve tridiagonal & damping kuat; $\Delta t$ besar tetap dapat tidak akurat\\
+Crank--Nicolson & $O(\Delta t^2+h^2)$ & stabil untuk semua $r>0$ & solve tridiagonal & lebih akurat dalam waktu; data tak mulus dapat berosilasi sementara\\
+Poisson 5-point & $O(h^2)$ & bukan marching waktu & solve sistem sparse & verifikasi melalui exact/MMS dan grid refinement\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{0.12cm}
+\centering
+\textbf{Tidak ada metode yang dipilih hanya karena ``stabil''.} Metode harus sesuai struktur PDP, kebutuhan akurasi, biaya komputasi, dan bukti verifikasi.
+\end{frame}
+
+% 30 ----------------------------------------------------------------
+\begin{frame}{Prosedur Kerja untuk Case 2}
 \small
 \begin{enumerate}
-\item \textbf{Formulasi model.} Nyatakan variabel, domain, asumsi, parameter, IC/BC, dan makna setiap suku.
-\item \textbf{Cari kasus pembanding.} Sederhanakan model ke kasus yang masih mewakili mekanisme utama dan mempunyai solusi analitik; jika tidak tersedia, gunakan manufactured solution.
-\item \textbf{Turunkan diskretisasi.} Setiap aproksimasi turunan harus berasal dari Taylor/integrasi/variational form yang jelas.
-\item \textbf{Periksa konsistensi.} Tentukan galat pemotongan dan orde formal.
-\item \textbf{Periksa stabilitas.} Gunakan analisis yang sesuai: mode Fourier/eigen, energy estimate, maximum principle, atau sifat matriks.
-\item \textbf{Lakukan verifikasi.} Bandingkan dengan solusi eksak dan lakukan refinement.
-\item \textbf{Kembalikan kompleksitas.} Terapkan solver pada model utama setelah perilaku pada benchmark dipahami.
-\item \textbf{Validasi bila diperlukan.} Jika tujuan akhir adalah prediksi dunia nyata, bandingkan model dengan data relevan.
+\item \textbf{Model utama:} definisikan fenomena, variabel, domain, asumsi, parameter, kondisi awal/batas, klasifikasi, dan makna setiap suku.
+\item \textbf{Cari limit/kasus sederhana:} pertahankan mekanisme utama tetapi pilih kondisi yang mempunyai solusi analitik atau manufactured solution.
+\item \textbf{Turunkan metode numerik:} jangan mulai dari kode; turunkan aproksimasi dan algoritmanya.
+\item \textbf{Periksa konsistensi dan stabilitas:} pahami syarat pemilihan $h$ dan $\Delta t$.
+\item \textbf{Verifikasi:} bandingkan numerik--analitik dan lakukan refinement.
+\item \textbf{Kembalikan kompleksitas:} baru terapkan solver pada geometri, forcing, parameter, atau data yang lebih realistis.
+\item \textbf{Interpretasi/validasi:} jawab masalah utama dan bandingkan dengan data nyata bila tujuan project adalah prediksi fenomena.
 \end{enumerate}
-\end{frame}
-
-% 27 ----------------------------------------------------------------
-\begin{frame}{Keterkaitan dengan Case 2}
-\small
-Struktur minimal analisis komputasi setiap kelompok:
-\begin{columns}[T,onlytextwidth]
-\column{0.31\textwidth}
-\begin{block}{Model utama}
-Fenomena nyata, asumsi, governing PDE, makna tiap suku, parameter, IC/BC, klasifikasi.
-\end{block}
-\column{0.31\textwidth}
-\begin{block}{Benchmark analitik}
-Kasus sederhana, solusi analitik/Fourier/eigen, atau manufactured solution yang dapat diperiksa.
-\end{block}
-\column{0.31\textwidth}
-\begin{block}{Numerik dan interpretasi}
-Diskretisasi, stabilitas, error, refinement, simulasi kasus utama, interpretasi dan validation bila data tersedia.
-\end{block}
-\end{columns}
-\vspace{0.15cm}
+\vspace{0.08cm}
 \begin{beamercolorbox}[sep=.12cm,wd=\textwidth]{normal text}
 \centering
-Pola yang sama sudah terlihat pada shallow-water: sistem nonlinear yang kompleks memiliki limit amplitudo kecil yang menjadi persamaan gelombang dan mempunyai solusi analitik. Prinsip tersebut sekarang diterapkan pada difusi dan masalah eliptik.
+Analitik bukan lawan numerik. Analitik adalah salah satu cara paling kuat untuk mengetahui kapan hasil numerik layak dipercaya.
 \end{beamercolorbox}
 \end{frame}
 
-% 28 ----------------------------------------------------------------
+% 31 ----------------------------------------------------------------
+\begin{frame}{Tugas: Eksperimen Stabilitas, Refinement, dan Verifikasi}
+\footnotesize
+Gunakan benchmark
+\[
+u_t=0.1u_{xx},\quad 0<x<1,\qquad
+u(0,t)=u(1,t)=0,
+\]
+\[
+u(x,0)=\sin(\pi x),\qquad
+u_{\text{eksak}}(x,t)=e^{-0.1\pi^2t}\sin(\pi x).
+\]
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
+\begin{block}{Eksperimen wajib}
+\begin{enumerate}
+  \item FTCS: gunakan $r=0.4$ pada $N_x=21,41,81$; hitung $E_\infty$ dan orde teramati.
+  \item Jalankan FTCS di luar syarat stabilitas, misalnya $r=0.6$; amati kapan perilaku mulai menyimpang.
+  \item Bandingkan Backward Euler dan Crank--Nicolson menggunakan $\Delta t$ yang sengaja lebih besar.
+  \item Tambah jumlah titik ruang tanpa menyesuaikan $\Delta t$; jelaskan apa yang terjadi pada $r$.
+\end{enumerate}
+\end{block}
+\column{0.48\textwidth}
+\begin{block}{Laporan diketik}
+Cantumkan:
+\begin{itemize}
+  \item persamaan, domain, kondisi awal/batas, dan parameter;
+  \item formula skema yang digunakan;
+  \item tabel $h,\Delta t,r,E_\infty$, dan orde teramati;
+  \item grafik analitik vs numerik serta kasus tidak stabil;
+  \item interpretasi hasil dan kesimpulan;
+  \item kode MATLAB lengkap sebagai lampiran.
+\end{itemize}
+\end{block}
+\end{columns}
+\pdpnote{Fokus CPMK: memilih dan menerapkan metode analitik/numerik yang tepat serta mengevaluasi kapan solusi numerik dapat dipercaya.}
+\end{frame}
+
+% 32 ----------------------------------------------------------------
+\begin{frame}[fragile]{MATLAB: Benchmark Heat Equation dan FTCS}
+\scriptsize
+\begin{lstlisting}[style=matlab]
+alpha = 0.1; L = 1; Tf = 0.1; Nx = 41;
+x = linspace(0,L,Nx)';
+h = x(2)-x(1);
+uex = @(t) exp(-alpha*pi^2*t).*sin(pi*x/L);
+
+r = 0.4;                         % ubah ke 0.6 untuk eksperimen
+Dt = r*h^2/alpha;
+Nt = ceil(Tf/Dt); Dt = Tf/Nt;
+r = alpha*Dt/h^2;
+
+u = sin(pi*x/L);                 % kondisi awal
+for n = 1:Nt
+    old = u;
+    u(2:end-1) = old(2:end-1) ...
+      + r*(old(3:end)-2*old(2:end-1)+old(1:end-2));
+    u(1)=0; u(end)=0;
+end
+Einf = max(abs(u-uex(Tf)));
+plot(x,uex(Tf),'LineWidth',1.6); hold on
+plot(x,u,'o'); grid on
+legend('Analitik','FTCS'); xlabel('x'); ylabel('u(x,T)')
+\end{lstlisting}
+\end{frame}
+
+% 33 ----------------------------------------------------------------
+\begin{frame}[fragile]{MATLAB: Backward Euler dan Crank--Nicolson}
+\scriptsize
+\begin{lstlisting}[style=matlab]
+m = Nx-2; e = ones(m,1);
+D2 = spdiags([e -2*e e],-1:1,m,m);
+I = speye(m);
+
+% Backward Euler
+rBE = alpha*Dt/h^2;
+A = I-rBE*D2;
+uBE = sin(pi*x/L);
+for n=1:Nt
+    uBE(2:end-1) = A\uBE(2:end-1);
+end
+
+% Crank-Nicolson
+rCN = alpha*Dt/h^2;
+A = I-0.5*rCN*D2;
+B = I+0.5*rCN*D2;
+uCN = sin(pi*x/L);
+for n=1:Nt
+    rhs = B*uCN(2:end-1);
+    uCN(2:end-1) = A\rhs;
+end
+\end{lstlisting}
+\pdpnote{Untuk boundary nonnol, kontribusi nilai batas harus ditambahkan ke ruas kanan pada setiap langkah waktu.}
+\end{frame}
+
+% 34 ----------------------------------------------------------------
+\begin{frame}[fragile]{MATLAB: Verifikasi Poisson dengan Manufactured Solution}
+\scriptsize
+\begin{lstlisting}[style=matlab]
+Ns = [8 16 32 64]; err = zeros(size(Ns));
+for kk=1:numel(Ns)
+    N=Ns(kk); h=1/N; x=(h:h:1-h)'; n=N-1;
+    [X,Y]=ndgrid(x,x);
+    f=2*pi^2*sin(pi*X).*sin(pi*Y);
+
+    e=ones(n,1);
+    T=spdiags([-e 4*e -e],-1:1,n,n);
+    A=(kron(speye(n),T) ...
+      + kron(spdiags([-e -e],[-1 1],n,n),speye(n)))/h^2;
+
+    uh=reshape(A\f(:),n,n);
+    ue=sin(pi*X).*sin(pi*Y);
+    err(kk)=max(abs(uh(:)-ue(:)));
+end
+p = log(err(1:end-1)./err(2:end))/log(2)
+disp(table(Ns(:),(1./Ns(:)),err(:)))
+\end{lstlisting}
+\end{frame}
+
+% 35 ----------------------------------------------------------------
 \begin{frame}{Referensi Utama}
 \scriptsize
-\begin{thebibliography}{9}
-\bibitem{dmn1} D. Michiko M. Noor (2026). \emph{Deret Fourier (I)--(III)}, materi Persamaan Diferensial Parsial, ITERA.
-\bibitem{dmn2} D. Michiko M. Noor (2026). \emph{Persamaan Panas: Separasi Variabel}, materi Persamaan Diferensial Parsial, ITERA.
-\bibitem{lax1956} Lax, P.D. \& Richtmyer, R.D. (1956). Survey of the stability of linear finite difference equations. \emph{Communications on Pure and Applied Mathematics}, 9, 267--293. DOI: 10.1002/cpa.3160090206.
-\bibitem{cn1947} Crank, J. \& Nicolson, P. (1947). A practical method for numerical evaluation of solutions of partial differential equations of the heat-conduction type. \emph{Proc. Cambridge Philosophical Society}, 43, 50--67. DOI: 10.1017/S0305004100023197.
-\bibitem{bs1973} Black, F. \& Scholes, M. (1973). The Pricing of Options and Corporate Liabilities. \emph{Journal of Political Economy}, 81(3), 637--654. DOI: 10.1086/260062.
-\bibitem{rannacher1984} Rannacher, R. (1984). Finite element solution of diffusion problems with irregular data. \emph{Numerische Mathematik}, 43, 309--327. DOI: 10.1007/BF01390130.
-\bibitem{roache2002} Roache, P.J. (2002). Code Verification by the Method of Manufactured Solutions. \emph{Journal of Fluids Engineering}, 124(1), 4--10. DOI: 10.1115/1.1436090.
+\begin{thebibliography}{99}
+\bibitem{dmnF} D. Michiko M. Noor (2026). \emph{Deret Fourier (I)--(III)}, materi Persamaan Diferensial Parsial, ITERA.
+\bibitem{dmnH} D. Michiko M. Noor (2026). \emph{Persamaan Panas: Separasi Variabel}, materi Persamaan Diferensial Parsial, ITERA.
+\bibitem{chapra} Chapra, S.C. \& Canale, R.P. (2021). \emph{Numerical Methods for Engineers}, 8th ed., McGraw-Hill.
+\bibitem{lax} Lax, P.D. \& Richtmyer, R.D. (1956). Survey of the stability of linear finite difference equations. \emph{Communications on Pure and Applied Mathematics}, 9, 267--293.
+\bibitem{cn} Crank, J. \& Nicolson, P. (1947). A practical method for numerical evaluation of solutions of partial differential equations of the heat-conduction type. \emph{Proc. Cambridge Philosophical Society}, 43, 50--67.
+\bibitem{roache} Roache, P.J. (2002). Code Verification by the Method of Manufactured Solutions. \emph{Journal of Fluids Engineering}, 124(1), 4--10.
+\bibitem{asme} ASME V\&V 20-2009. \emph{Standard for Verification and Validation in Computational Fluid Dynamics and Heat Transfer}.
+\bibitem{bs} Black, F. \& Scholes, M. (1973). The Pricing of Options and Corporate Liabilities. \emph{Journal of Political Economy}, 81(3), 637--654.
+\bibitem{peat1} Ritzema et al. (2021). Water table variations on different land use units in a drained tropical peatland island of Indonesia. \emph{Hydrology Research}, 52(6), 1372--1388.
+\bibitem{peat2} Taufik et al. (2022). Groundwater table and soil-hydrological properties datasets of Indonesian peatlands. \emph{Data in Brief}, 41, 107903.
 \end{thebibliography}
-\vspace{0.04cm}
-\pdpnote{Textbook pendamping: Strikwerda, \emph{Finite Difference Schemes and Partial Differential Equations}; Morton \& Mayers, \emph{Numerical Solution of Partial Differential Equations}; LeVeque, \emph{Finite Difference Methods for Ordinary and Partial Differential Equations}.}
 \end{frame}
 
 \end{document}
